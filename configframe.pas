@@ -96,7 +96,7 @@ type
     procedure SavePropToFile(var arcINI: TIniFile); virtual;
     //métodos para agregar pares- variable-control
     procedure Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
-                             defVal, minVal, maxVal: integer);
+                             defVal: integer; minVal, maxVal: integer);
     procedure Asoc_Int_TSpnEdi(ptrInt: pointer; spEdit: TSpinEdit; etiq: string;
                              defVal, minVal, maxVal: integer);
     procedure Asoc_Str_TEdit(ptrStr: pointer; edit: TEdit; etiq: string;
@@ -126,6 +126,9 @@ type
   procedure Hide_AllConfigFrames(form: TForm);
   function ReadFileToProp_AllFrames(form: TForm; arIni: string): string;
   function SavePropToFile_AllFrames(form: TForm; arIni: string): string;
+  function WindowToProp_AllFrames(form: TForm): string;
+  function PropToWindow_AllFrames(form: TForm): string;
+
 
 implementation
 
@@ -228,6 +231,34 @@ begin
     Result := '';  //Limpia
   finally
     appIni.Free;                   //libera
+  end;
+end;
+function WindowToProp_AllFrames(form: TForm): string;
+//Llama al método WindowToProp de todos los frames de configuración.
+//Si encuentra error devuelve el mensaje.
+var
+  f: TFrame;
+begin
+  Result := '';
+  //Fija propiedades de los controles
+  for f in ListOfFrames(form) do begin
+    f.WindowToProp;
+    Result := f.MsjErr;
+    if Result<>'' then exit;
+  end;
+end;
+function PropToWindow_AllFrames(form: TForm): string;
+//Llama al método PropToWindow de todos los frames de configuración.
+//Si encuentra error devuelve el mensaje.
+var
+  f: TFrame;
+begin
+  Result := '';
+  //llama a PropToWindow() de todos los PropertyFrame.Frames
+  for f in ListOfFrames(form) do begin
+    f.PropToWindow;
+    Result := f.MsjErr;
+    if Result<>'' then exit;
   end;
 end;
 
@@ -500,7 +531,7 @@ begin
   end;
 end;
 procedure TFrame.Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
-  defVal, minVal, maxVal: integer);
+  defVal: integer; minVal, maxVal: integer);
 //Agrega un para variable entera - Control TEdit
 var n: integer;
   r: TParElem;

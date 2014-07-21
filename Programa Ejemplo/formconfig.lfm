@@ -39,7 +39,6 @@ object Config: TConfig
     Width = 75
     DefaultCaption = True
     Kind = bkOK
-    ModalResult = 1
     OnClick = BitAceptarClick
     TabOrder = 2
   end
@@ -54,8 +53,9 @@ object Config: TConfig
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
     Items.Strings = (
-      'Texto'
+      'Textos'
       'Colores'
+      'Números'
     )
     ItemHeight = 20
     OnClick = lstCategClick

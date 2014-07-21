@@ -33,7 +33,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="5">
       <Unit0>
         <Filename Value="project1.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -64,20 +64,13 @@
         <UnitName Value="frameTexto"/>
       </Unit3>
       <Unit4>
-        <Filename Value="framecolores.pas"/>
+        <Filename Value="framegeneral.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="fraColores"/>
+        <ComponentName Value="fraConfig"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="FrameColores"/>
+        <UnitName Value="frameGeneral"/>
       </Unit4>
-      <Unit5>
-        <Filename Value="framenumeros.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FraNumeros"/>
-        <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="frameNumeros"/>
-      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

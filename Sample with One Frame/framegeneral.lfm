@@ -1,0 +1,92 @@
+object fraConfig: TfraConfig
+  Left = 0
+  Height = 240
+  Top = 0
+  Width = 320
+  ClientHeight = 240
+  ClientWidth = 320
+  TabOrder = 0
+  DesignLeft = 342
+  DesignTop = 195
+  object ColorButton1: TColorButton
+    Left = 80
+    Height = 25
+    Top = 88
+    Width = 75
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clBlack
+  end
+  object Label1: TLabel
+    Left = 16
+    Height = 15
+    Top = 96
+    Width = 32
+    Caption = 'Color:'
+    ParentColor = False
+  end
+  object Edit1: TEdit
+    Left = 80
+    Height = 23
+    Top = 24
+    Width = 80
+    TabOrder = 0
+    Text = 'Edit1'
+  end
+  object Label2: TLabel
+    Left = 16
+    Height = 15
+    Top = 24
+    Width = 25
+    Caption = 'Text;'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 16
+    Height = 15
+    Top = 56
+    Width = 47
+    Caption = 'Number:'
+    ParentColor = False
+  end
+  object Edit2: TEdit
+    Left = 80
+    Height = 23
+    Top = 56
+    Width = 80
+    TabOrder = 1
+    Text = 'Edit2'
+  end
+  object Label4: TLabel
+    Left = 16
+    Height = 15
+    Top = 136
+    Width = 45
+    Caption = 'Options:'
+    ParentColor = False
+  end
+  object RadButton1: TRadioButton
+    Left = 88
+    Height = 19
+    Top = 136
+    Width = 82
+    Caption = 'RadButton1'
+    TabOrder = 2
+  end
+  object RadButton2: TRadioButton
+    Left = 88
+    Height = 19
+    Top = 168
+    Width = 82
+    Caption = 'RadButton2'
+    TabOrder = 3
+  end
+  object RadButton3: TRadioButton
+    Left = 88
+    Height = 19
+    Top = 200
+    Width = 82
+    Caption = 'RadButton3'
+    TabOrder = 4
+  end
+end

@@ -8,7 +8,8 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Buttons,
   StdCtrls, iniFiles,
-  frameTexto, frameColores,  //deben incluirse todos los frames de propiedades a usar
+   //deben incluirse todos los frames de propiedades a usar
+  frameTexto, frameColores, frameNumeros,
   ConfigFrame;  //necesario para manejar los Frames de configuración
 
 type
@@ -35,6 +36,7 @@ type
     //frames de configuración
     Texto: TfraTexto;
     Colores: TfraColores;
+    Numeros: TfraNumeros;
     procedure escribirArchivoIni;
     procedure leerArchivoIni;
     procedure LeerDeVentana;
@@ -60,21 +62,25 @@ begin
   Texto.parent := self;
   Colores:= TfraColores.Create(Self);
   Colores.parent := self;
+  Numeros := TfraNumeros.Create(Self);
+  Numeros.parent := self;
 
-  /////// verifica archivo INI /////////////
   arIni := GetIniName;
 end;
 
 procedure TConfig.BitAceptarClick(Sender: TObject);
 begin
   bitAplicarClick(Self);
-  self.Close;
+  if msjError='' then self.Close;  //sale si no hay error
 end;
 
 procedure TConfig.BitAplicarClick(Sender: TObject);
 begin
   LeerDeVentana;       //Escribe propiedades de los frames
-  if msjError<>'' then exit;
+  if msjError<>'' then begin
+    showmessage(msjError);
+    exit;
+  end;
   escribirArchivoIni;   //guarda propiedades en disco
 end;
 
@@ -86,6 +92,7 @@ begin
   //inicia los Frames creados
   Texto.Iniciar('texto');
   Colores.Iniciar('colores',f);
+  Numeros.Iniciar('numeros');
 
   LeerArchivoIni;  //lee parámetros del archivo de configuración.
 end;
@@ -106,6 +113,7 @@ begin
   //************  Modificar Aquí ***************//
   if lstCateg.ItemIndex = 0 then Texto.ShowPos(120,0) ;
   if lstCateg.ItemIndex = 1 then Colores.ShowPos(120,0);
+  if lstCateg.ItemIndex = 2 then Numeros.ShowPos(120,0);
 end;
 
 procedure TConfig.Mostrar;
@@ -118,27 +126,14 @@ end;
 
 procedure TConfig.LeerDeVentana;
 //Lee las propiedades de la ventana de configuración.
-var f: TFrame;
 begin
-  msjError := '';
-  //Fija propiedades de los controles
-  for f in ListOfFrames(self) do begin
-    f.WindowToProp;
-    msjError := f.MsjErr;
-    if msjError<>'' then exit;
-  end;
+  msjError := WindowToProp_AllFrames(self);
 end;
 
 procedure TConfig.MostEnVentana;
 //Muestra las propiedades en la ventana de configuración.
-var f: TFrame;
 begin
-  //llama a PropToWindow() de todos los PropertyFrame.Frames
-  for f in ListOfFrames(self) do begin
-    f.PropToWindow;
-    msjError := f.MsjErr;
-    if msjError<>'' then exit;
-  end;
+  msjError := PropToWindow_AllFrames(self);
 end;
 
 procedure TConfig.leerArchivoIni;
