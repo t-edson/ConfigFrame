@@ -13,7 +13,7 @@ Con la unidad "ConfigFrame", se puede crear Frames de configuración tan simples
 como este:
 
 
-`unit frameTexto;
+`unit frameTexto`;
 
 {$mode objfpc}{$H+}
 interface
