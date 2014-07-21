@@ -13,7 +13,7 @@ Con la unidad "ConfigFrame", se puede crear Frames de configuración tan simples
 como este:
 
 
-(`
+```
 unit frameTexto;
 
 {$mode objfpc}{$H+}
@@ -21,7 +21,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls,
   ConfigFrame;  //necesario para manejar los Frames de configuración
-type`)
+type
   
   TfraTexto = class(TFrame)
   
@@ -47,7 +47,7 @@ begin
 end;
 
 end.
-
+```
 
 Y aún con este código tan simple, el frame permitirá editar el valor de la variable
 "texto" con el control "Edit1", y guardar los cambios a disco o leerlos desde allí.
