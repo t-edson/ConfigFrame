@@ -21,11 +21,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="29" Y="18"/>
+        <TopLine Value="17"/>
+        <CursorPos X="1" Y="39"/>
         <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -37,10 +36,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormConfig"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="69"/>
-        <CursorPos X="23" Y="88"/>
+        <TopLine Value="50"/>
+        <CursorPos X="5" Y="64"/>
         <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -64,20 +64,18 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="frameGeneral"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="7"/>
+        <TopLine Value="10"/>
         <CursorPos X="14" Y="30"/>
         <UsageCount Value="33"/>
-        <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\configframe.pas"/>
         <UnitName Value="ConfigFrame"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
-        <FoldState Value=" TL00A1 T4G0]65J0O TMk60105]GCiIDD T8ib21]F3k5096 pigjF0D4 T6kH0342]R0kNe7628 THnU4k2 pjAlE4tl"/>
+        <TopLine Value="250"/>
+        <CursorPos X="3" Y="256"/>
+        <FoldState Value=" TL00A1 T4G0]65J0O TMk60105]GCiIDD T8ib21]F3k5096 pigjF0D013 T6kH0342]T0kNe7628 THnU4k2 pjAlE4tH"/>
         <UsageCount Value="14"/>
       </Unit5>
       <Unit6>
@@ -99,7 +97,7 @@
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="16" HistoryIndex="15">
+    <JumpHistory Count="22" HistoryIndex="21">
       <Position1>
         <Filename Value="formconfig.pas"/>
         <Caret Line="75" Column="1" TopLine="58"/>
@@ -133,37 +131,61 @@
         <Caret Line="52" Column="23" TopLine="36"/>
       </Position8>
       <Position9>
-        <Filename Value="framegeneral.pas"/>
-        <Caret Line="1" Column="25" TopLine="1"/>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="88" Column="23" TopLine="64"/>
       </Position9>
       <Position10>
-        <Filename Value="framegeneral.pas"/>
-        <Caret Line="63" Column="1" TopLine="30"/>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="72" Column="15" TopLine="51"/>
       </Position10>
       <Position11>
-        <Filename Value="framegeneral.pas"/>
-        <Caret Line="56" Column="25" TopLine="30"/>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position11>
       <Position12>
-        <Filename Value="framegeneral.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="31" Column="27" TopLine="3"/>
       </Position12>
       <Position13>
-        <Filename Value="framegeneral.pas"/>
-        <Caret Line="29" Column="14" TopLine="13"/>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="72" Column="15" TopLine="44"/>
       </Position13>
       <Position14>
-        <Filename Value="framegeneral.pas"/>
-        <Caret Line="28" Column="1" TopLine="23"/>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="81" Column="31" TopLine="53"/>
       </Position14>
       <Position15>
-        <Filename Value="framegeneral.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="unit1.pas"/>
+        <Caret Line="9" Column="1" TopLine="1"/>
       </Position15>
       <Position16>
-        <Filename Value="framegeneral.pas"/>
-        <Caret Line="8" Column="58" TopLine="1"/>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="88" Column="35" TopLine="63"/>
       </Position16>
+      <Position17>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="72" Column="15" TopLine="59"/>
+      </Position17>
+      <Position18>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="92" Column="1" TopLine="59"/>
+      </Position18>
+      <Position19>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position19>
+      <Position20>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="79" Column="1" TopLine="43"/>
+      </Position20>
+      <Position21>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="54" Column="9" TopLine="52"/>
+      </Position21>
+      <Position22>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="10" Column="3" TopLine="1"/>
+      </Position22>
     </JumpHistory>
   </ProjectSession>
   <EditorMacros Count="0"/>

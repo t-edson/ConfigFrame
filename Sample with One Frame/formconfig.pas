@@ -6,8 +6,7 @@ unit FormConfig;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Buttons,
-  StdCtrls, iniFiles, frameGeneral,
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Buttons, frameGeneral,
   ConfigFrame;  //needed for use the config Frames
 
 type
@@ -28,9 +27,6 @@ type
     arIni   : String;    //INI file
     General: TfraConfig;  //Config Frames
     procedure Initiate(f: TForm);
-    procedure WindowToProp;
-    procedure PropToWindow;
-    procedure ReadFromFile;
     procedure SaveToFile;
   end;
 
@@ -51,46 +47,30 @@ end;
 
 procedure TConfig.Initiate(f: TForm);
 begin
-  //inicia los Frames creados
   General.Initiate('general', f);
   General.ShowPos(120,0);
-  ReadFromFile;  //lee parámetros del archivo de configuración.
+  msjError := ReadFileToProp_AllFrames(self, arINI);
 end;
 
 procedure TConfig.FormDestroy(Sender: TObject);
 begin
-  Free_AllConfigFrames(self);  //Libera los frames de configuración
+  Free_AllConfigFrames(self);  //free all config frames
 end;
 
 procedure TConfig.FormShow(Sender: TObject);
 begin
-  PropToWindow;   //carga las propiedades en el frame
+  msjError := PropToWindow_AllFrames(self);
 end;
 
 procedure TConfig.BitAceptarClick(Sender: TObject);
 begin
-  WindowToProp;       //Escribe propiedades de los frames
+  msjError := WindowToProp_AllFrames(self);
   if msjError<>'' then begin
     showmessage(msjError);
     exit;
   end;
-  SaveToFile;   //guarda propiedades en disco
+  SaveToFile;
   self.Close;
-end;
-
-procedure TConfig.WindowToProp;
-begin
-  msjError := WindowToProp_AllFrames(self);
-end;
-
-procedure TConfig.PropToWindow;
-begin
-  msjError := PropToWindow_AllFrames(self);
-end;
-
-procedure TConfig.ReadFromFile;
-begin
-  msjError := ReadFileToProp_AllFrames(self, arINI);
 end;
 
 procedure TConfig.SaveToFile;
