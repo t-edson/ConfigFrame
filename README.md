@@ -25,6 +25,7 @@ type
   TfraTexto = class(TFrame)
     Edit1: TEdit;
   public
+    //variables de propiedades
     texto : string;
     procedure Iniciar(secINI0: string); //Inicia el frame
   end;
@@ -57,6 +58,6 @@ El esquema de trabajo definido para el manejo de las propiedades de una aplicaci
 
 * Los Frames se crean normalmente con el editor visual de Lazarus, colocando los controles necesarios para manejar a las propiedades que se usan en ese Frame.
  
-* La ventana de configuración, así como los Frames de configuración se deben crear incluyendo la unidad "PropertyFrame", para que puedan usar la nueva definición de TFrame. Esta unidad se debe incluir al final de la sección USES para lograr la interceptación de la clase TFrame.
+* La ventana de configuración, así como los Frames de configuración se deben crear incluyendo la unidad "ConfigFrame", para que puedan usar la nueva definición de TFrame. Esta unidad se debe incluir al final de la sección USES para lograr la interceptación de la clase TFrame.
 
 Se puede usar el programa ejemplo como una plantilla de trabajo.
