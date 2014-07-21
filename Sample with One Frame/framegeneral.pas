@@ -5,7 +5,7 @@ unit frameGeneral;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Dialogs, StdCtrls, Graphics,
+  Classes, SysUtils, Forms, Controls, Dialogs, StdCtrls, Graphics,
   ConfigFrame;  //need to be used in a Config Frame
 
 type
@@ -34,7 +34,7 @@ type
     MyNumber : integer;
     MyCol: TColor;
     MyEnum: TMyEnum;
-    procedure Initiate(secINI0: string; form: TForm); //Inicia el frame
+    procedure Initiate(secINI0: string; form: TForm);
   end;
 
 implementation
@@ -54,7 +54,7 @@ begin
 end;
 
 procedure TfraConfig.ConfigEditor;
-//actualiza los cambios de las propiedades
+//Update changes of the vars
 begin
   f.Color := MyCol;
 end;

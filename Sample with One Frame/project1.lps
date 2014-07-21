@@ -11,7 +11,7 @@
         <UnitName Value="project1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="53" Y="10"/>
+        <CursorPos X="1" Y="21"/>
         <UsageCount Value="33"/>
       </Unit0>
       <Unit1>
@@ -22,12 +22,13 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="5" Y="10"/>
+        <CursorPos X="29" Y="18"/>
         <UsageCount Value="33"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="formconfig.pas"/>
@@ -38,8 +39,8 @@
         <UnitName Value="FormConfig"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="13"/>
-        <CursorPos X="28" Y="30"/>
+        <TopLine Value="69"/>
+        <CursorPos X="23" Y="88"/>
         <UsageCount Value="33"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -63,10 +64,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="frameGeneral"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="22"/>
-        <CursorPos X="6" Y="58"/>
+        <TopLine Value="7"/>
+        <CursorPos X="14" Y="30"/>
         <UsageCount Value="33"/>
+        <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\configframe.pas"/>
@@ -96,7 +99,7 @@
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="8" HistoryIndex="7">
+    <JumpHistory Count="16" HistoryIndex="15">
       <Position1>
         <Filename Value="formconfig.pas"/>
         <Caret Line="75" Column="1" TopLine="58"/>
@@ -129,6 +132,38 @@
         <Filename Value="formconfig.pas"/>
         <Caret Line="52" Column="23" TopLine="36"/>
       </Position8>
+      <Position9>
+        <Filename Value="framegeneral.pas"/>
+        <Caret Line="1" Column="25" TopLine="1"/>
+      </Position9>
+      <Position10>
+        <Filename Value="framegeneral.pas"/>
+        <Caret Line="63" Column="1" TopLine="30"/>
+      </Position10>
+      <Position11>
+        <Filename Value="framegeneral.pas"/>
+        <Caret Line="56" Column="25" TopLine="30"/>
+      </Position11>
+      <Position12>
+        <Filename Value="framegeneral.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position12>
+      <Position13>
+        <Filename Value="framegeneral.pas"/>
+        <Caret Line="29" Column="14" TopLine="13"/>
+      </Position13>
+      <Position14>
+        <Filename Value="framegeneral.pas"/>
+        <Caret Line="28" Column="1" TopLine="23"/>
+      </Position14>
+      <Position15>
+        <Filename Value="framegeneral.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position15>
+      <Position16>
+        <Filename Value="framegeneral.pas"/>
+        <Caret Line="8" Column="58" TopLine="1"/>
+      </Position16>
     </JumpHistory>
   </ProjectSession>
   <EditorMacros Count="0"/>
