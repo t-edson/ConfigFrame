@@ -16,16 +16,15 @@ como este:
 ```
 unit frameTexto;
 {$mode objfpc}{$H+}
+
 interface
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls,
-  ConfigFrame;  //necesario para manejar los Frames de configuración
+  Classes, SysUtils, Forms, Controls, StdCtrls, ConfigFrame; 
+
 type
-  
   TfraTexto = class(TFrame)
     Edit1: TEdit;
   public
-    //variables de propiedades
     texto : string;
     procedure Iniciar(secINI0: string); //Inicia el frame
   end;
