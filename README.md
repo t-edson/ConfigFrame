@@ -13,14 +13,15 @@ Con la unidad "ConfigFrame", se puede crear Frames de configuración tan simples
 como este:
 
 
-  unit frameTexto;
+(`
+unit frameTexto;
 
-  {$mode objfpc}{$H+}
-  interface
-  uses
-    Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls,
-    ConfigFrame;  //necesario para manejar los Frames de configuración
-  type
+{$mode objfpc}{$H+}
+interface
+uses
+  Classes, SysUtils, FileUtil, Forms, Controls, StdCtrls,
+  ConfigFrame;  //necesario para manejar los Frames de configuración
+type`)
   
   TfraTexto = class(TFrame)
   
