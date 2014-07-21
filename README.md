@@ -12,6 +12,7 @@ Se asume que se trabajará con un archivo INI, en donde se guardarán las variab
 Con la unidad "ConfigFrame", se puede crear Frames de configuración tan simples
 como este:
 
+
 unit frameTexto;
 
 {$mode objfpc}{$H+}
@@ -45,6 +46,7 @@ begin
 end;
 
 end.
+
 
 Y aún con este código tan simple, el frame permitirá editar el valor de la variable
 "texto" con el control "Edit1", y guardar los cambios a disco o leerlos desde allí.
