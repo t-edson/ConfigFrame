@@ -1,63 +1,52 @@
 ConfigFrame
 =============
 
-Es una unidad (librería) desarrollada en Lazarus que contiene la definición de una clase para reemplazar a TFrame.
+This unit for Lazarus, contain a new TFrame classs for replace to the Lazarus TFrame definition.
 
-Esta nueva clase TFrame incluye métodos predefinidos que facilitan la manipulación de variables (propiedades) de la aplicación, de modo que editarlos en un diálogo y guardar los cambios a disco, se hacen de forma casi transparente.
+This new TFrame includes predefined methods that facilitate the manipulation of variables (properties) of the application, so edit them in a config dialog, and save the changes to disk, are nearly transparent.
 
-Con esta librería se simplifica considerablemente, la creación de ventanas de configuración.
+This library simplifies the creation of configuration dialogs.
 
-Se asume que se trabajará con un archivo INI, en donde se guardarán las variables de trabajo.
+It is assumed that we work with an INI file, where the work variables are saved.
 
-Con la unidad "ConfigFrame", se puede crear Frames de configuración tan simples
-como este:
-
-
+With the "ConfigFrame" unit, you can create as simple configuration Frames
+like this:
 ```
-unit frameTexto;
+unit frameGeneral;
 {$mode objfpc}{$H+}
 
 interface
 uses
-  Classes, SysUtils, Forms, Controls, StdCtrls, ConfigFrame; 
+  Classes, SysUtils, Forms, Controls, StdCtrls, ConfigFrame;
 
 type
-  TfraTexto = class(TFrame)
+
+  TfraConfig = class(TFrame)
     Edit1: TEdit;
+    Edit2: TEdit;
   public
-    //variables de propiedades
-    texto : string;
-    procedure Iniciar(secINI0: string); //Inicia el frame
+    //vars to manage
+    MyText : string;
+    MyNumber : integer;
+    procedure Initiate(secINI0: string);
   end;
 
 implementation
 {$R *.lfm}
 
-procedure TfraTexto.Iniciar(secINI0: string);
+procedure TfraConfig.Initiate(secINI0: string);
 begin
-  secINI := secINI0;  //sección INI
-  //asocia propiedades a controles
-  Asoc_Str_TEdit(@texto, Edit1, 'texto', '');
+  secINI := secINI0;  //section INI
+  //asociate vars to controls
+  Asoc_Str_TEdit(@MyText, Edit1, 'MyText', '');
+  Asoc_Int_TEdit(@MyNumber, Edit2, 'MyNumber', 5, 1,7);
 end;
 
 end.
 ```
 
-Y aún con este código tan simple, el frame permitirá editar el valor de la variable
-"texto" con el control "Edit1", y guardar los cambios a disco o leerlos desde allí.
+And, even with this simple code, the frame allow you to edit the value of two variables
+(MyText and MyNumber) on a frame, and save your changes to disk or read from there.
 
-Se incluye un ejemplo sencillo en donde se implementa una ventana de configuración que usa dos Frames, que se han implementado con pocas líneas de código.
+Two sample projects are included, one with one frame on a config form, and other with several frames on a config form.
 
-El esquema de trabajo definido para el manejo de las propiedades de una aplicación es:
-
-* Se usará un solo archivo INI y una sola ventana de configuración. Aunque se podría manejar diversos archivos de configuración, se recomienda mantener la relación:  Archivo INI <-> Ventana de configuración.
-
-* Una ventana de configuración puede manejar uno o más Frames, a los que se les llamará Frame de Configuración. Cuando se manejen más de uno, se puede usar un control de  lista o pestañas para elegir con que Frame(s) trabajar.
-
-* Cada Frame de configuración agrupa a un conjunto de propiedades que tengan relación entre sí. Por ejemplo, se puede tener un Frame para las propiedades generales, uno para las propiedades del editor, ... etc.
-
-* Los Frames se crean normalmente con el editor visual de Lazarus, colocando los controles necesarios para manejar a las propiedades que se usan en ese Frame.
- 
-* La ventana de configuración, así como los Frames de configuración se deben crear incluyendo la unidad "ConfigFrame", para que puedan usar la nueva definición de TFrame. Esta unidad se debe incluir al final de la sección USES para lograr la interceptación de la clase TFrame.
-
-Se puede usar el programa ejemplo como una plantilla de trabajo.
