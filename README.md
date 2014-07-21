@@ -1,4 +1,4 @@
-PropertyFrame
+ConfigFrame
 =============
 
 Es una unidad (librería) desarrollada en Lazarus que contiene la definición de una clase para reemplazar a TFrame.
@@ -23,17 +23,22 @@ uses
 type
 
   TfraTexto = class(TFrame)
+  
     Edit1: TEdit;
+	
   public
+  
     //variables de propiedades
     texto : string;
     procedure Iniciar(secINI0: string); //Inicia el frame
-  end;
+
+	end;
 
 implementation
 {$R *.lfm}
 
 procedure TfraTexto.Iniciar(secINI0: string);
+
 begin
   secINI := secINI0;  //sección INI
   //asocia propiedades a controles
