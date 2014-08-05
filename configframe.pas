@@ -3,11 +3,12 @@
  administración de propiedades. Incluye el manejo de entrada y salida a archivos INI.
  Por Tito Hinostroza 10/07/2014
 
- Versión 0.1
+ Versión 0.2
+ ===========
  Por Tito Hinostroza 20/07/2014
- *Se agregan funciones adicionales para simplificar el código del formulario de
- configuración.
- * Se separan las constantes de cadena, para facilitar la traducción a otros idiomas.
+ *Se agrega protección para guardar las cadenas que incluyen espacios laterales. Antes
+ no se podía guardar cadenas con espacios.
+
 }
 unit ConfigFrame;
 {$mode objfpc}{$H+}
@@ -131,7 +132,7 @@ type
 
 
 implementation
-
+//Utilidades para el formulario de configuración
 function IsFrameProperty(c: TComponent): boolean;
 //Permite identificar si un componente es un Frame creado a partir de TFrame de
 //esta unidad.
@@ -262,6 +263,17 @@ begin
   end;
 end;
 
+function WriteStr(s:string): string;
+//Protege a una cadena para que no pierda los espacios laterales si es que los tiene,
+//porque el el archivo INI se pierden.
+begin
+  Result:='.'+s+'.';
+end;
+function ReadStr(s:string): string;
+//Quita la protección a una cadena que ha sido guardada en un archivo INI
+begin
+  Result:=copy(s,2,length(s)-2);
+end;
 constructor TFrame.Create(TheOwner: TComponent);
 begin
   inherited;
@@ -420,10 +432,10 @@ begin
          Integer(r.Pvar^) := arcINI.ReadInteger(secINI, r.etiqVar, r.defEnt);
        end;
     tp_Str_TEdit: begin  //lee cadena
-         String(r.Pvar^) := arcINI.ReadString(secINI, r.etiqVar, r.defStr);
+         String(r.Pvar^) := ReadStr(arcINI.ReadString(secINI, r.etiqVar, r.defStr));
        end;
     tp_Str_TCmbBox: begin  //lee cadena
-         String(r.Pvar^) := arcINI.ReadString(secINI, r.etiqVar, r.defStr);
+         String(r.Pvar^) := ReadStr(arcINI.ReadString(secINI, r.etiqVar, r.defStr));
        end;
     tp_Bol_TChkB: begin  //lee booleano
          boolean(r.Pvar^) := arcINI.ReadBool(secINI, r.etiqVar, r.defBol);
@@ -446,7 +458,7 @@ begin
          boolean(r.Pvar^) := arcINI.ReadBool(secINI, r.etiqVar, r.defBol);
        end;
     tp_Str: begin  //lee cadena
-         String(r.Pvar^) := arcINI.ReadString(secINI, r.etiqVar, r.defStr);
+         String(r.Pvar^) := ReadStr(arcINI.ReadString(secINI, r.etiqVar, r.defStr));
        end;
     tp_StrList: begin //lee TStringList
          arcINI.ReadSection(secINI+'_'+r.etiqVar,TStringList(r.Pvar^));
@@ -483,11 +495,11 @@ begin
        end;
     tp_Str_TEdit: begin //escribe cadena
          s := String(r.Pvar^);
-         arcINI.WriteString(secINI, r.etiqVar, s);
+         arcINI.WriteString(secINI, r.etiqVar,WriteStr(s));
        end;
     tp_Str_TCmbBox: begin //escribe cadena
          s := String(r.Pvar^);
-         arcINI.WriteString(secINI, r.etiqVar, s);
+         arcINI.WriteString(secINI, r.etiqVar,WriteStr(s));
        end;
     tp_Bol_TChkB: begin  //escribe booleano
          b := boolean(r.Pvar^);
@@ -516,7 +528,7 @@ begin
        end;
     tp_Str: begin //escribe cadena
          s := String(r.Pvar^);
-         arcINI.WriteString(secINI, r.etiqVar, s);
+         arcINI.WriteString(secINI, r.etiqVar,WriteStr(s));
        end;
     tp_StrList: begin
           strlst := TStringList(r.Pvar^);

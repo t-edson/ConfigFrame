@@ -9,7 +9,7 @@
         <Filename Value="project1.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="project1"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="33"/>
       </Unit0>
       <Unit1>
         <Filename Value="unit1.pas"/>
@@ -21,7 +21,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="27"/>
         <CursorPos X="1" Y="60"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="33"/>
       </Unit1>
       <Unit2>
         <Filename Value="formconfig.pas"/>
@@ -30,14 +30,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormConfig"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="57"/>
-        <CursorPos X="14" Y="74"/>
-        <UsageCount Value="31"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <TopLine Value="119"/>
+        <CursorPos X="22" Y="148"/>
+        <UsageCount Value="33"/>
       </Unit2>
       <Unit3>
         <Filename Value="frametexto.pas"/>
@@ -49,7 +45,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="2"/>
         <CursorPos X="1" Y="6"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="33"/>
       </Unit3>
       <Unit4>
         <Filename Value="framecolores.pas"/>
@@ -61,123 +57,51 @@
         <WindowIndex Value="0"/>
         <TopLine Value="13"/>
         <CursorPos X="11" Y="27"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="33"/>
       </Unit4>
       <Unit5>
-        <Filename Value="..\configframe.pas"/>
-        <UnitName Value="ConfigFrame"/>
+        <Filename Value="framenumeros.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FraNumeros"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="frameNumeros"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="83"/>
-        <CursorPos X="15" Y="98"/>
-        <UsageCount Value="13"/>
+        <TopLine Value="6"/>
+        <CursorPos X="19" Y="32"/>
+        <UsageCount Value="23"/>
       </Unit5>
       <Unit6>
+        <Filename Value="..\configframe.pas"/>
+        <UnitName Value="ConfigFrame"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="190"/>
+        <CursorPos X="6" Y="208"/>
+        <UsageCount Value="14"/>
+        <Loaded Value="True"/>
+      </Unit6>
+      <Unit7>
         <Filename Value="C:\lazarus\fpc\2.6.2\source\rtl\objpas\objpas.pp"/>
         <UnitName Value="objpas"/>
         <WindowIndex Value="0"/>
         <TopLine Value="70"/>
         <CursorPos X="33" Y="86"/>
         <UsageCount Value="10"/>
-      </Unit6>
-      <Unit7>
+      </Unit7>
+      <Unit8>
         <Filename Value="C:\lazarus\lcl\include\control.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="3620"/>
         <CursorPos X="1" Y="3636"/>
         <UsageCount Value="10"/>
-      </Unit7>
-      <Unit8>
-        <Filename Value="framenumeros.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FraNumeros"/>
-        <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="frameNumeros"/>
-        <EditorIndex Value="1"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="6"/>
-        <CursorPos X="19" Y="32"/>
-        <UsageCount Value="21"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit8>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="18" HistoryIndex="17">
-      <Position1>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="157" Column="1" TopLine="124"/>
-      </Position1>
-      <Position2>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="80" Column="1" TopLine="69"/>
-      </Position2>
-      <Position3>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="157" Column="1" TopLine="124"/>
-      </Position3>
-      <Position4>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position4>
-      <Position5>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="13" Column="1" TopLine="1"/>
-      </Position5>
-      <Position6>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="153" Column="26" TopLine="124"/>
-      </Position6>
-      <Position7>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="115" Column="15" TopLine="109"/>
-      </Position7>
-      <Position8>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="76" Column="11" TopLine="64"/>
-      </Position8>
-      <Position9>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="38" Column="26" TopLine="18"/>
-      </Position9>
-      <Position10>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="12" Column="42" TopLine="1"/>
-      </Position10>
-      <Position11>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="115" Column="55" TopLine="88"/>
-      </Position11>
-      <Position12>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="17" Column="9" TopLine="1"/>
-      </Position12>
-      <Position13>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="18" Column="9" TopLine="1"/>
-      </Position13>
-      <Position14>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="19" Column="9" TopLine="1"/>
-      </Position14>
-      <Position15>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="35" Column="1" TopLine="5"/>
-      </Position15>
-      <Position16>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="34" Column="12" TopLine="6"/>
-      </Position16>
-      <Position17>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="34" Column="1" TopLine="6"/>
-      </Position17>
-      <Position18>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="36" Column="1" TopLine="6"/>
-      </Position18>
-    </JumpHistory>
+    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectSession>
   <EditorMacros Count="0"/>
 </CONFIG>

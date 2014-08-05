@@ -4,18 +4,15 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="8">
+    <Units Count="9">
       <Unit0>
         <Filename Value="project1.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="project1"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="29" Y="10"/>
-        <UsageCount Value="34"/>
-        <Loaded Value="True"/>
+        <CursorPos X="1" Y="21"/>
+        <UsageCount Value="44"/>
       </Unit0>
       <Unit1>
         <Filename Value="unit1.pas"/>
@@ -24,11 +21,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="17"/>
-        <CursorPos X="1" Y="39"/>
-        <UsageCount Value="34"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="44"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -42,8 +39,8 @@
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="50"/>
-        <CursorPos X="6" Y="77"/>
-        <UsageCount Value="34"/>
+        <CursorPos X="20" Y="69"/>
+        <UsageCount Value="44"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit2>
@@ -57,7 +54,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="20" Y="19"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="44"/>
       </Unit3>
       <Unit4>
         <Filename Value="framegeneral.pas"/>
@@ -66,20 +63,23 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="frameGeneral"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="10"/>
-        <CursorPos X="14" Y="30"/>
-        <UsageCount Value="34"/>
+        <TopLine Value="27"/>
+        <CursorPos X="15" Y="51"/>
+        <UsageCount Value="44"/>
+        <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\configframe.pas"/>
         <UnitName Value="ConfigFrame"/>
-        <EditorIndex Value="2"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="79"/>
-        <CursorPos X="29" Y="56"/>
-        <FoldState Value=" T4G01 T5J0O TMk60105]GCiIDD T8ib21]F3k5096 pigjF0D013 T6kH0342]T0kNe7628 THnU4k2 pjAlE4t}"/>
-        <UsageCount Value="15"/>
+        <TopLine Value="434"/>
+        <CursorPos X="35" Y="437"/>
+        <FoldState Value=" T5J0O TMk601051 TCiIDD T8ib21]F3k5096 pigjF0D124 T6kH0342]T0kNe7637L"/>
+        <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -88,132 +88,150 @@
         <WindowIndex Value="0"/>
         <TopLine Value="70"/>
         <CursorPos X="33" Y="86"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit6>
       <Unit7>
         <Filename Value="C:\lazarus\lcl\include\control.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="3620"/>
         <CursorPos X="1" Y="3636"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="C:\lazarus\fpc\2.6.2\source\packages\fcl-base\src\inifiles.pp"/>
+        <UnitName Value="IniFiles"/>
+        <EditorIndex Value="4"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="763"/>
+        <CursorPos X="54" Y="763"/>
+        <UsageCount Value="14"/>
+        <Loaded Value="True"/>
+      </Unit8>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="28" HistoryIndex="27">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="formconfig.pas"/>
-        <Caret Line="75" Column="1" TopLine="58"/>
+        <Caret Line="92" Column="1" TopLine="59"/>
       </Position1>
       <Position2>
         <Filename Value="formconfig.pas"/>
-        <Caret Line="17" Column="24" TopLine="1"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position2>
       <Position3>
         <Filename Value="formconfig.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="79" Column="1" TopLine="43"/>
       </Position3>
       <Position4>
         <Filename Value="formconfig.pas"/>
-        <Caret Line="72" Column="43" TopLine="27"/>
+        <Caret Line="54" Column="9" TopLine="52"/>
       </Position4>
       <Position5>
         <Filename Value="formconfig.pas"/>
-        <Caret Line="10" Column="35" TopLine="1"/>
+        <Caret Line="10" Column="3" TopLine="1"/>
       </Position5>
       <Position6>
         <Filename Value="formconfig.pas"/>
-        <Caret Line="102" Column="1" TopLine="21"/>
+        <Caret Line="75" Column="1" TopLine="50"/>
       </Position6>
       <Position7>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="23" Column="1" TopLine="1"/>
+        <Filename Value="formconfig.pas"/>
+        <Caret Line="10" Column="3" TopLine="1"/>
       </Position7>
       <Position8>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="52" Column="23" TopLine="36"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position8>
       <Position9>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="88" Column="23" TopLine="64"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="783" Column="1" TopLine="751"/>
       </Position9>
       <Position10>
         <Filename Value="formconfig.pas"/>
-        <Caret Line="72" Column="15" TopLine="51"/>
+        <Caret Line="15" Column="1" TopLine="1"/>
       </Position10>
       <Position11>
         <Filename Value="formconfig.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="49" Column="6" TopLine="35"/>
       </Position11>
       <Position12>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="31" Column="27" TopLine="3"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="597" Column="21" TopLine="573"/>
       </Position12>
       <Position13>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="72" Column="15" TopLine="44"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position13>
       <Position14>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="81" Column="31" TopLine="53"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="4" Column="16" TopLine="1"/>
       </Position14>
       <Position15>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="9" Column="1" TopLine="1"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="45" Column="5" TopLine="1"/>
       </Position15>
       <Position16>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="88" Column="35" TopLine="63"/>
+        <Filename Value="unit1.pas"/>
+        <Caret Line="46" Column="15" TopLine="17"/>
       </Position16>
       <Position17>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="72" Column="15" TopLine="59"/>
+        <Filename Value="unit1.pas"/>
+        <Caret Line="50" Column="1" TopLine="17"/>
       </Position17>
       <Position18>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="92" Column="1" TopLine="59"/>
+        <Filename Value="framegeneral.pas"/>
+        <Caret Line="51" Column="15" TopLine="27"/>
       </Position18>
       <Position19>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="50" Column="9" TopLine="45"/>
       </Position19>
       <Position20>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="79" Column="1" TopLine="43"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="300" Column="17" TopLine="251"/>
       </Position20>
       <Position21>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="54" Column="9" TopLine="52"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="368" Column="17" TopLine="351"/>
       </Position21>
       <Position22>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="10" Column="3" TopLine="1"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="422" Column="17" TopLine="414"/>
       </Position22>
       <Position23>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="75" Column="1" TopLine="50"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="479" Column="12" TopLine="460"/>
       </Position23>
       <Position24>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="10" Column="3" TopLine="1"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="487" Column="28" TopLine="465"/>
       </Position24>
       <Position25>
         <Filename Value="..\configframe.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="18" Column="45" TopLine="1"/>
       </Position25>
       <Position26>
-        <Filename Value="..\configframe.pas"/>
-        <Caret Line="783" Column="1" TopLine="751"/>
+        <Filename Value="C:\lazarus\fpc\2.6.2\source\packages\fcl-base\src\inifiles.pp"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position26>
       <Position27>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="15" Column="1" TopLine="1"/>
+        <Filename Value="C:\lazarus\fpc\2.6.2\source\packages\fcl-base\src\inifiles.pp"/>
+        <Caret Line="131" Column="26" TopLine="116"/>
       </Position27>
       <Position28>
-        <Filename Value="project1.lpr"/>
-        <Caret Line="21" Column="1" TopLine="1"/>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="497" Column="52" TopLine="485"/>
       </Position28>
+      <Position29>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="274" Column="25" TopLine="182"/>
+      </Position29>
+      <Position30>
+        <Filename Value="..\configframe.pas"/>
+        <Caret Line="434" Column="32" TopLine="418"/>
+      </Position30>
     </JumpHistory>
   </ProjectSession>
   <EditorMacros Count="0"/>
