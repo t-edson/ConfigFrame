@@ -8,6 +8,8 @@
  Por Tito Hinostroza 20/07/2014
  *Se agrega protección para guardar las cadenas que incluyen espacios laterales. Antes
  no se podía guardar cadenas con espacios.
+ *Se agrega el método Asoc_Bol_TRadBut(), para asociar variables booelanas a 2 controles
+ RadioButton.
 
 }
 unit ConfigFrame;
@@ -53,6 +55,7 @@ type
   ,tp_Bol_TChkB     //booleano asociado a CheckBox
   ,tp_TCol_TColBut  //TColor asociado a TColorButton
   ,tp_Enum_TRadBut  //Enumerado asociado a TRadioButton
+  ,tp_Bol_TRadBut  //Booleano asociado a TRadioButton
   ,tp_Int           //Entero sin asociación
   ,tp_Bol           //Boleano sin asociación
   ,tp_Str           //String sin asociación
@@ -110,6 +113,8 @@ type
                              defVal: TColor);
     procedure Asoc_Enum_TRadBut(ptrEnum: pointer; EnumSize: integer;
                     radButs: array of TRadioButton; etiq: string; defVal: integer);
+    procedure Asoc_Bol_TRadBut(ptrBol: pointer;
+                    radButs: array of TRadioButton; etiq: string; defVal: boolean);
     //métodos para agregar valores sin asociación a controles
     procedure Asoc_Int(ptrInt: pointer; etiq: string; defVal: integer);
     procedure Asoc_Bol(ptrBol: pointer; etiq: string; defVal: boolean);
@@ -337,6 +342,12 @@ begin
             exit;
           end;
        end;
+    tp_Bol_TRadBut: begin //Enumerado a TRadioButtons
+          b:= boolean(r.Pvar^);  //convierte a entero
+          if 1<=High(r.radButs) then
+            if b then r.radButs[1].checked := true  //activa primero
+            else r.radButs[0].checked := true  //activa segundo
+       end;
     tp_Int:; //no tiene control asociado
     tp_Bol:; //no tiene control asociado
     tp_Str:; //no tiene control asociado
@@ -404,6 +415,13 @@ begin
              end;
           end;
        end;
+    tp_Bol_TRadBut: begin //TRadioButtons a Enumerado
+          //busca el que está marcado
+          if high(r.radButs)>=1 then begin
+             if r.radButs[1].checked then boolean(r.Pvar^) := true
+             else boolean(r.Pvar^) := false;
+          end;
+       end;
     tp_Int:; //no tiene control asociado
     tp_Bol:; //no tiene control asociado
     tp_Str:; //no tiene control asociado
@@ -450,6 +468,9 @@ begin
            msjErr := MSG_NO_IMP_ENUM_T;
            exit;
          end;
+       end;
+    tp_Bol_TRadBut: begin  //lee booleano
+         boolean(r.Pvar^) := arcINI.ReadBool(secINI, r.etiqVar, r.defBol);
        end;
     tp_Int: begin  //lee entero
          Integer(r.Pvar^) := arcINI.ReadInteger(secINI, r.etiqVar, r.defEnt);
@@ -518,6 +539,10 @@ begin
          exit;
        end;
     end;
+    tp_Bol_TRadBut: begin  //escribe booleano
+         b := boolean(r.Pvar^);
+         arcINI.WriteBool(secINI, r.etiqVar, b);
+       end;
     tp_Int: begin //escribe entero
          n := Integer(r.Pvar^);
          arcINI.WriteInteger(secINI, r.etiqVar, n);
@@ -661,6 +686,29 @@ begin
   for i:=0 to high(radButs) do
     r.radButs[i]:= radButs[i];
 
+  //agrega
+  n := high(listParElem)+1;    //número de elementos
+  setlength(listParElem, n+1);  //hace espacio
+  listParElem[n] := r;          //agrega
+end;
+
+procedure TFrame.Asoc_Bol_TRadBut(ptrBol: pointer;
+  radButs: array of TRadioButton; etiq: string; defVal: boolean);
+//Agrega un par variable Enumerated - Controles TRadioButton
+//Solo se permiten enumerados de hasta 32 bits de tamaño
+var n: integer;
+  r: TParElem;
+  i: Integer;
+begin
+  r.pVar   := ptrBol;  //toma referencia
+//  r.pCtl   := ;    //toma referencia
+  r.tipPar := tp_Bol_TRadBut;  //tipo de par
+  r.etiqVar:= etiq;
+  r.defBol := defVal;   //se maneja como entero
+  //guarda lista de controles
+  setlength(r.radButs,high(radButs)+1);  //hace espacio
+  for i:=0 to high(radButs) do
+    r.radButs[i]:= radButs[i];
   //agrega
   n := high(listParElem)+1;    //número de elementos
   setlength(listParElem, n+1);  //hace espacio
