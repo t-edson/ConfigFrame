@@ -6,7 +6,7 @@
  Versión 0.3
  ===========
  Por Tito Hinostroza 21/08/2014
- *Se corrige la lectura de parámetrso de tipo caena por defecto. Se estaba truncando un
+ *Se corrige la lectura de parámetros de tipo cadena por defecto. Se estaba truncando un
  caracter lateralmente
  *Se cambia el tipo TEdit a TCustomEdit en Asoc_Str_TEdit(), para que acepte diversos
  controles que descienden de TCustomEdit, además de TEdit.
