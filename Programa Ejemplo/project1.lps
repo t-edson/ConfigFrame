@@ -9,7 +9,7 @@
         <Filename Value="project1.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="project1"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="43"/>
       </Unit0>
       <Unit1>
         <Filename Value="unit1.pas"/>
@@ -18,10 +18,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="27"/>
-        <CursorPos X="1" Y="60"/>
-        <UsageCount Value="31"/>
+        <CursorPos X="28" Y="56"/>
+        <UsageCount Value="43"/>
+        <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="formconfig.pas"/>
@@ -30,14 +33,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FormConfig"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="0"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="57"/>
-        <CursorPos X="14" Y="74"/>
-        <UsageCount Value="31"/>
+        <TopLine Value="56"/>
+        <CursorPos X="1" Y="67"/>
+        <UsageCount Value="43"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="frametexto.pas"/>
@@ -49,7 +50,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="2"/>
         <CursorPos X="1" Y="6"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="43"/>
       </Unit3>
       <Unit4>
         <Filename Value="framecolores.pas"/>
@@ -58,125 +59,68 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="FrameColores"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="13"/>
-        <CursorPos X="11" Y="27"/>
-        <UsageCount Value="31"/>
+        <CursorPos X="28" Y="14"/>
+        <UsageCount Value="43"/>
+        <Loaded Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="..\configframe.pas"/>
-        <UnitName Value="ConfigFrame"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="83"/>
-        <CursorPos X="15" Y="98"/>
-        <UsageCount Value="13"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="C:\lazarus\fpc\2.6.2\source\rtl\objpas\objpas.pp"/>
-        <UnitName Value="objpas"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="70"/>
-        <CursorPos X="33" Y="86"/>
-        <UsageCount Value="10"/>
-      </Unit6>
-      <Unit7>
-        <Filename Value="C:\lazarus\lcl\include\control.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="3620"/>
-        <CursorPos X="1" Y="3636"/>
-        <UsageCount Value="10"/>
-      </Unit7>
-      <Unit8>
         <Filename Value="framenumeros.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FraNumeros"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="frameNumeros"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="6"/>
         <CursorPos X="19" Y="32"/>
-        <UsageCount Value="21"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <UsageCount Value="33"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\configframe.pas"/>
+        <UnitName Value="ConfigFrame"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="36"/>
+        <CursorPos X="25" Y="55"/>
+        <UsageCount Value="19"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="C:\lazarus\fpc\2.6.2\source\rtl\objpas\objpas.pp"/>
+        <UnitName Value="objpas"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="70"/>
+        <CursorPos X="33" Y="86"/>
+        <UsageCount Value="9"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="C:\lazarus\lcl\include\control.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="3620"/>
+        <CursorPos X="1" Y="3636"/>
+        <UsageCount Value="9"/>
       </Unit8>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="18" HistoryIndex="17">
+    <JumpHistory Count="4" HistoryIndex="3">
       <Position1>
         <Filename Value="formconfig.pas"/>
-        <Caret Line="157" Column="1" TopLine="124"/>
+        <Caret Line="134" Column="38" TopLine="119"/>
       </Position1>
       <Position2>
         <Filename Value="formconfig.pas"/>
-        <Caret Line="80" Column="1" TopLine="69"/>
+        <Caret Line="38" Column="21" TopLine="17"/>
       </Position2>
       <Position3>
         <Filename Value="formconfig.pas"/>
-        <Caret Line="157" Column="1" TopLine="124"/>
+        <Caret Line="95" Column="1" TopLine="71"/>
       </Position3>
       <Position4>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="framecolores.pas"/>
+        <Caret Line="14" Column="28" TopLine="13"/>
       </Position4>
-      <Position5>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="13" Column="1" TopLine="1"/>
-      </Position5>
-      <Position6>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="153" Column="26" TopLine="124"/>
-      </Position6>
-      <Position7>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="115" Column="15" TopLine="109"/>
-      </Position7>
-      <Position8>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="76" Column="11" TopLine="64"/>
-      </Position8>
-      <Position9>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="38" Column="26" TopLine="18"/>
-      </Position9>
-      <Position10>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="12" Column="42" TopLine="1"/>
-      </Position10>
-      <Position11>
-        <Filename Value="formconfig.pas"/>
-        <Caret Line="115" Column="55" TopLine="88"/>
-      </Position11>
-      <Position12>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="17" Column="9" TopLine="1"/>
-      </Position12>
-      <Position13>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="18" Column="9" TopLine="1"/>
-      </Position13>
-      <Position14>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="19" Column="9" TopLine="1"/>
-      </Position14>
-      <Position15>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="35" Column="1" TopLine="5"/>
-      </Position15>
-      <Position16>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="34" Column="12" TopLine="6"/>
-      </Position16>
-      <Position17>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="34" Column="1" TopLine="6"/>
-      </Position17>
-      <Position18>
-        <Filename Value="framenumeros.pas"/>
-        <Caret Line="36" Column="1" TopLine="6"/>
-      </Position18>
     </JumpHistory>
   </ProjectSession>
   <EditorMacros Count="0"/>

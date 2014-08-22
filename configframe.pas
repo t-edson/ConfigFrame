@@ -3,11 +3,18 @@
  administración de propiedades. Incluye el manejo de entrada y salida a archivos INI.
  Por Tito Hinostroza 10/07/2014
 
- Versión 0.1
- Por Tito Hinostroza 20/07/2014
- *Se agregan funciones adicionales para simplificar el código del formulario de
- configuración.
- * Se separan las constantes de cadena, para facilitar la traducción a otros idiomas.
+ Versión 0.3
+ ===========
+ Por Tito Hinostroza 21/08/2014
+ *Se corrige la lectura de parámetrso de tipo caena por defecto. Se estaba truncando un
+ caracter lateralmente
+ *Se cambia el tipo TEdit a TCustomEdit en Asoc_Str_TEdit(), para que acepte diversos
+ controles que descienden de TCustomEdit, además de TEdit.
+ *Se pone ShowPos() como VIRTUAL.
+ *Se agrega protección a intentar poner foco en control si es que el frame no está visible.
+ *Se agrega la asociación tp_StrList_TListBox, para poder cargar un TStringList en un
+ control TListBox.
+
 }
 unit ConfigFrame;
 {$mode objfpc}{$H+}
@@ -49,9 +56,11 @@ type
   ,tp_Int_TSpnEdit  //entero asociado a TSpinEdit
   ,tp_Str_TEdit     //string asociado a TEdit
   ,tp_Str_TCmbBox   //string asociado a TComboBox
+  ,tp_StrList_TListBox   //StringList asociado a TListBox
   ,tp_Bol_TChkB     //booleano asociado a CheckBox
   ,tp_TCol_TColBut  //TColor asociado a TColorButton
   ,tp_Enum_TRadBut  //Enumerado asociado a TRadioButton
+  ,tp_Bol_TRadBut  //Booleano asociado a TRadioButton
   ,tp_Int           //Entero sin asociación
   ,tp_Bol           //Boleano sin asociación
   ,tp_Str           //String sin asociación
@@ -86,7 +95,7 @@ type
     secINI: string;   //sección donde se guardaran los datos en un archivo INI
     MsjErr: string;   //mensaje de error
     OnUpdateChanges: procedure of object;
-    procedure ShowPos(x, y: integer);
+    procedure ShowPos(x, y: integer); virtual;
     function EditValidateInt(edit: TEdit; min: integer=MaxInt; max: integer=-MaxInt): boolean;
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
@@ -99,16 +108,19 @@ type
                              defVal: integer; minVal, maxVal: integer);
     procedure Asoc_Int_TSpnEdi(ptrInt: pointer; spEdit: TSpinEdit; etiq: string;
                              defVal, minVal, maxVal: integer);
-    procedure Asoc_Str_TEdit(ptrStr: pointer; edit: TEdit; etiq: string;
+    procedure Asoc_Str_TEdit(ptrStr: pointer; edit: TCustomEdit; etiq: string;
                              defVal: string);
     procedure Asoc_Str_TCmbBox(ptrStr: pointer; cmbBox: TComboBox; etiq: string;
                              defVal: string);
+    procedure Asoc_StrList_TListBox(ptrStrList: pointer; lstBox: TlistBox; etiq: string);
     procedure Asoc_Bol_TChkB(ptrBol: pointer; chk: TCheckBox; etiq: string;
                              defVal: boolean);
     procedure Asoc_Col_TColBut(ptrInt: pointer; colBut: TColorButton; etiq: string;
                              defVal: TColor);
     procedure Asoc_Enum_TRadBut(ptrEnum: pointer; EnumSize: integer;
                     radButs: array of TRadioButton; etiq: string; defVal: integer);
+    procedure Asoc_Bol_TRadBut(ptrBol: pointer;
+                    radButs: array of TRadioButton; etiq: string; defVal: boolean);
     //métodos para agregar valores sin asociación a controles
     procedure Asoc_Int(ptrInt: pointer; etiq: string; defVal: integer);
     procedure Asoc_Bol(ptrBol: pointer; etiq: string; defVal: boolean);
@@ -131,7 +143,7 @@ type
 
 
 implementation
-
+//Utilidades para el formulario de configuración
 function IsFrameProperty(c: TComponent): boolean;
 //Permite identificar si un componente es un Frame creado a partir de TFrame de
 //esta unidad.
@@ -262,6 +274,17 @@ begin
   end;
 end;
 
+function WriteStr(s:string): string;
+//Protege a una cadena para que no pierda los espacios laterales si es que los tiene,
+//porque el el archivo INI se pierden.
+begin
+  Result:='.'+s+'.';
+end;
+function ReadStr(s:string): string;
+//Quita la protección a una cadena que ha sido guardada en un archivo INI
+begin
+  Result:=copy(s,2,length(s)-2);
+end;
 constructor TFrame.Create(TheOwner: TComponent);
 begin
   inherited;
@@ -276,12 +299,13 @@ end;
 procedure TFrame.PropToWindow;
 //Muestra en los controles, las variables asociadas
 var
-  i:integer;
+  i,j:integer;
   r: TParElem;
   n: integer;
   b: boolean;
   s: string;
   c: TColor;
+  list: TStringList;
 begin
   msjErr := '';
   for i:=0 to high(listParElem) do begin
@@ -307,6 +331,13 @@ begin
           s:= String(r.Pvar^);
           TComboBox(r.pCtl).Text:=s;
        end;
+    tp_StrList_TListBox: begin  //lista en TlistBox
+         //carga lista
+         list := TStringList(r.Pvar^);
+         TListBox(r.pCtl).Clear;
+         for j:=0 to list.Count-1 do
+           TListBox(r.pCtl).AddItem(list[j],nil);
+      end;
     tp_Bol_TChkB: begin //boolean a TCheckBox
           b := boolean(r.Pvar^);
           TCheckBox(r.pCtl).Checked := b;
@@ -325,6 +356,12 @@ begin
             exit;
           end;
        end;
+    tp_Bol_TRadBut: begin //Enumerado a TRadioButtons
+          b:= boolean(r.Pvar^);  //convierte a entero
+          if 1<=High(r.radButs) then
+            if b then r.radButs[1].checked := true  //activa primero
+            else r.radButs[0].checked := true  //activa segundo
+       end;
     tp_Int:; //no tiene control asociado
     tp_Bol:; //no tiene control asociado
     tp_Str:; //no tiene control asociado
@@ -341,6 +378,7 @@ var
   i,j: integer;
   spEd: TSpinEdit;
   r: TParElem;
+  list: TStringList;
 begin
   msjErr := '';
   for i:=0 to high(listParElem) do begin
@@ -355,12 +393,12 @@ begin
           spEd := TSpinEdit(r.pCtl);
           if spEd.Value < r.minEnt then begin
             MsjErr:=MSG_MIN_VAL_IS+IntToStr(r.minEnt);
-            if spEd.visible and spEd.enabled then spEd.SetFocus;
+            if spEd.visible and spEd.enabled and self.visible then spEd.SetFocus;
             exit;
           end;
           if spEd.Value > r.maxEnt then begin
             MsjErr:=MSG_MAX_VAL_IS+IntToStr(r.maxEnt);
-            if spEd.visible and spEd.enabled then spEd.SetFocus;
+            if spEd.visible and spEd.enabled and self.visible then spEd.SetFocus;
             exit;
           end;
           Integer(r.Pvar^) := spEd.Value;
@@ -370,6 +408,12 @@ begin
        end;
     tp_Str_TCmbBox: begin //cadena de TComboBox
           String(r.Pvar^) := TComboBox(r.pCtl).Text;
+       end;
+    tp_StrList_TListBox: begin //carga a TStringList
+          list := TStringList(r.Pvar^);
+          list.Clear;
+          for j:= 0 to TListBox(r.pCtl).Count-1 do
+            list.Add(TListBox(r.pCtl).Items[j]);
        end;
     tp_Bol_TChkB: begin  //boolean de  CheckBox
           boolean(r.Pvar^) := TCheckBox(r.pCtl).Checked;
@@ -390,6 +434,13 @@ begin
                  exit;
                end;
              end;
+          end;
+       end;
+    tp_Bol_TRadBut: begin //TRadioButtons a Enumerado
+          //busca el que está marcado
+          if high(r.radButs)>=1 then begin
+             if r.radButs[1].checked then boolean(r.Pvar^) := true
+             else boolean(r.Pvar^) := false;
           end;
        end;
     tp_Int:; //no tiene control asociado
@@ -420,10 +471,13 @@ begin
          Integer(r.Pvar^) := arcINI.ReadInteger(secINI, r.etiqVar, r.defEnt);
        end;
     tp_Str_TEdit: begin  //lee cadena
-         String(r.Pvar^) := arcINI.ReadString(secINI, r.etiqVar, r.defStr);
+         String(r.Pvar^) := ReadStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
        end;
     tp_Str_TCmbBox: begin  //lee cadena
-         String(r.Pvar^) := arcINI.ReadString(secINI, r.etiqVar, r.defStr);
+         String(r.Pvar^) := ReadStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
+       end;
+    tp_StrList_TListBox: begin //lee TStringList
+         arcINI.ReadSection(secINI+'_'+r.etiqVar,TStringList(r.Pvar^));
        end;
     tp_Bol_TChkB: begin  //lee booleano
          boolean(r.Pvar^) := arcINI.ReadBool(secINI, r.etiqVar, r.defBol);
@@ -439,6 +493,9 @@ begin
            exit;
          end;
        end;
+    tp_Bol_TRadBut: begin  //lee booleano
+         boolean(r.Pvar^) := arcINI.ReadBool(secINI, r.etiqVar, r.defBol);
+       end;
     tp_Int: begin  //lee entero
          Integer(r.Pvar^) := arcINI.ReadInteger(secINI, r.etiqVar, r.defEnt);
        end;
@@ -446,7 +503,7 @@ begin
          boolean(r.Pvar^) := arcINI.ReadBool(secINI, r.etiqVar, r.defBol);
        end;
     tp_Str: begin  //lee cadena
-         String(r.Pvar^) := arcINI.ReadString(secINI, r.etiqVar, r.defStr);
+         String(r.Pvar^) := ReadStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
        end;
     tp_StrList: begin //lee TStringList
          arcINI.ReadSection(secINI+'_'+r.etiqVar,TStringList(r.Pvar^));
@@ -483,11 +540,17 @@ begin
        end;
     tp_Str_TEdit: begin //escribe cadena
          s := String(r.Pvar^);
-         arcINI.WriteString(secINI, r.etiqVar, s);
+         arcINI.WriteString(secINI, r.etiqVar,WriteStr(s));
        end;
     tp_Str_TCmbBox: begin //escribe cadena
          s := String(r.Pvar^);
-         arcINI.WriteString(secINI, r.etiqVar, s);
+         arcINI.WriteString(secINI, r.etiqVar,WriteStr(s));
+       end;
+    tp_StrList_TListBox: begin  //escribe TStringList
+          strlst := TStringList(r.Pvar^);
+          arcINI.EraseSection(secINI+'_'+r.etiqVar);
+          for j:= 0 to strlst.Count-1 do
+            arcINI.WriteString(secINI+'_'+r.etiqVar,strlst[j],'');
        end;
     tp_Bol_TChkB: begin  //escribe booleano
          b := boolean(r.Pvar^);
@@ -506,6 +569,10 @@ begin
          exit;
        end;
     end;
+    tp_Bol_TRadBut: begin  //escribe booleano
+         b := boolean(r.Pvar^);
+         arcINI.WriteBool(secINI, r.etiqVar, b);
+       end;
     tp_Int: begin //escribe entero
          n := Integer(r.Pvar^);
          arcINI.WriteInteger(secINI, r.etiqVar, n);
@@ -516,9 +583,9 @@ begin
        end;
     tp_Str: begin //escribe cadena
          s := String(r.Pvar^);
-         arcINI.WriteString(secINI, r.etiqVar, s);
+         arcINI.WriteString(secINI, r.etiqVar,WriteStr(s));
        end;
-    tp_StrList: begin
+    tp_StrList: begin  //escribe TStringList
           strlst := TStringList(r.Pvar^);
           arcINI.EraseSection(secINI+'_'+r.etiqVar);
           for j:= 0 to strlst.Count-1 do
@@ -566,8 +633,8 @@ begin
   setlength(listParElem, n+1);  //hace espacio
   listParElem[n] := r;          //agrega
 end;
-procedure TFrame.Asoc_Str_TEdit(ptrStr: pointer; edit: TEdit; etiq: string;
-  defVal: string);
+procedure TFrame.Asoc_Str_TEdit(ptrStr: pointer; edit: TCustomEdit;
+  etiq: string; defVal: string);
 //Agrega un par variable string - Control TEdit
 var n: integer;
   r: TParElem;
@@ -598,6 +665,23 @@ begin
   setlength(listParElem, n+1);  //hace espacio
   listParElem[n] := r;          //agrega
 end;
+
+procedure TFrame.Asoc_StrList_TListBox(ptrStrList: pointer; lstBox: TlistBox;
+  etiq: string);
+var n: integer;
+  r: TParElem;
+begin
+  r.pVar   := ptrStrList;  //toma referencia
+  r.pCtl   := lstBox;    //toma referencia
+  r.tipPar := tp_StrList_TlistBox;  //tipo de par
+  r.etiqVar:= etiq;
+//  r.defCol := defVal;
+  //agrega
+  n := high(listParElem)+1;    //número de elementos
+  setlength(listParElem, n+1);  //hace espacio
+  listParElem[n] := r;          //agrega
+end;
+
 procedure TFrame.Asoc_Bol_TChkB(ptrBol: pointer; chk: TCheckBox; etiq: string;
   defVal: boolean);
 //Agrega un para variable booleana - Control TCheckBox
@@ -649,6 +733,29 @@ begin
   for i:=0 to high(radButs) do
     r.radButs[i]:= radButs[i];
 
+  //agrega
+  n := high(listParElem)+1;    //número de elementos
+  setlength(listParElem, n+1);  //hace espacio
+  listParElem[n] := r;          //agrega
+end;
+
+procedure TFrame.Asoc_Bol_TRadBut(ptrBol: pointer;
+  radButs: array of TRadioButton; etiq: string; defVal: boolean);
+//Agrega un par variable Enumerated - Controles TRadioButton
+//Solo se permiten enumerados de hasta 32 bits de tamaño
+var n: integer;
+  r: TParElem;
+  i: Integer;
+begin
+  r.pVar   := ptrBol;  //toma referencia
+//  r.pCtl   := ;    //toma referencia
+  r.tipPar := tp_Bol_TRadBut;  //tipo de par
+  r.etiqVar:= etiq;
+  r.defBol := defVal;   //se maneja como entero
+  //guarda lista de controles
+  setlength(r.radButs,high(radButs)+1);  //hace espacio
+  for i:=0 to high(radButs) do
+    r.radButs[i]:= radButs[i];
   //agrega
   n := high(listParElem)+1;    //número de elementos
   setlength(listParElem, n+1);  //hace espacio
@@ -743,7 +850,7 @@ begin
   tmp := trim(edit.Text);
   if tmp = '' then begin
     MsjErr:= MSG_FLD_HAV_VAL;
-    if edit.visible and edit.enabled then edit.SetFocus;
+    if edit.visible and edit.enabled and self.visible then edit.SetFocus;
     exit;
   end;
   if tmp[1] = '-' then begin  //es negativo
@@ -753,25 +860,25 @@ begin
   for c in tmp do begin
     if not (c in ['0'..'9']) then begin
       MsjErr:= MSG_ONLY_NUM_VAL;
-      if edit.visible and edit.enabled then edit.SetFocus;
+      if edit.visible and edit.enabled and self.visible then edit.SetFocus;
       exit;
     end;
   end;
   if length(tmp) > larMaxInt then begin
     MsjErr:= MSG_NUM_TOO_LONG;
-    if edit.visible and edit.enabled then edit.SetFocus;
+    if edit.visible and edit.enabled and self.visible then edit.SetFocus;
     exit;
   end;
   //lo leemos en Int64 por seguridad y validamos
   n := StrToInt64(signo + tmp);
   if n>max then begin
     MsjErr:= MSG_MAX_VAL_IS + IntToStr(max);
-    if edit.visible and edit.enabled then edit.SetFocus;
+    if edit.visible and edit.enabled and self.visible then edit.SetFocus;
     exit;
   end;
   if n<min then begin
     MsjErr:= MSG_MIN_VAL_IS + IntToStr(min);
-    if edit.visible and edit.enabled then edit.SetFocus;
+    if edit.visible and edit.enabled and self.visible then edit.SetFocus;
     exit;
   end;
   //pasó las validaciones
