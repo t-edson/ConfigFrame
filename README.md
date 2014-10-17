@@ -98,6 +98,6 @@ INI File <-> Configuración Dialog.
 
 It's also recommended use standard names for the objects. We can use these rules:
 
-* The units where the  Configuration Frames are defined, must be called frameCfg{XXX}. Where {XXX} is the part of the name whta identify the function of the frame. For Example frameCfgColors, frameCfgMainEdit
+* The units where the  Configuration Frames are defined, must be called frameCfg{XXX}. Where {XXX} is the part of the name that identify the function of the frame. For Example frameCfgColors, frameCfgMainEdit
 
 * The Config Dialog (Where the Configuration Frames are included), must have the name FormConfig, and the Form must have the name 'Config'.
