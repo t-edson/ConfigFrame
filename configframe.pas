@@ -320,7 +320,7 @@ begin
     for i := 0 to Padre.Count-1 do begin
       it := Padre.Items[i];
       if it.Level=1 then begin
-        if IntToStr(it.Index+1) = list[0] then Result := it;
+        if IntToStr(it.Index+1) = list[1] then Result := it;
       end;
     end;
   end;
