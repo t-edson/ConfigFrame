@@ -1,5 +1,5 @@
-ConfigFrame
-=============
+ConfigFrame 0.4
+===============
 
 ConfigFrame es una unidad de Lazarus, que puede ser usada para crear fácilmente formualrios de configuración.
 
@@ -80,7 +80,7 @@ procedure Asoc_StrList(ptrStrList: pointer; etiq: string);
 
 Se incluye un ejemplo sencillo en donde se implementa una ventana de configuración que usa dos Frames, que se han implementado con pocas líneas de código.
 
-Config Frame, puede ser visto también, como un sencillo marco de trabajo (framework), porque define alguna reglas para la creación de ventanas de configuración:
+ConfigFrame, puede ser visto también, como un sencillo marco de trabajo (framework), porque define alguna reglas para la creación de ventanas de configuración:
 
 * Se usará un solo archivo INI y una sola ventana de configuración. Aunque se podría manejar diversos archivos de configuración, se recomienda mantener la relación:  Archivo INI <-> Ventana de configuración.
 

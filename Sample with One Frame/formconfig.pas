@@ -24,7 +24,9 @@ type
     { private declarations }
   public
     msjError: string;    //Error string
+    fraError: TFrame;
     arIni   : String;    //INI file
+
     General: TfraConfig;  //Config Frames
     procedure Initiate(f: TForm);
     procedure SaveToFile;
@@ -59,14 +61,14 @@ end;
 
 procedure TConfig.FormShow(Sender: TObject);
 begin
-  msjError := PropToWindow_AllFrames(self);
+  fraError := PropToWindow_AllFrames(self);
 end;
 
 procedure TConfig.BitAceptarClick(Sender: TObject);
 begin
-  msjError := WindowToProp_AllFrames(self);
-  if msjError<>'' then begin
-    showmessage(msjError);
+  fraError := WindowToProp_AllFrames(self);
+  if fraError<>nil then begin
+    showmessage(fraError.MsjErr);
     exit;
   end;
   SaveToFile;

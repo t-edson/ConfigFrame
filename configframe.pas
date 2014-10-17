@@ -1,28 +1,27 @@
-{                                   ConfigFrame
- Unidad para interceptar la clase TFrame y usar un TFrame personalizado que facilite la
- administración de propiedades. Incluye el manejo de entrada y salida a archivos INI.
- Por Tito Hinostroza 10/07/2014
+{
+ConfigFrame 0.4
+==================
+Por Tito Hinostroza 03/09/2014
+* Se cambia la definición de WindowToProp_AllFrames(), y PropToWindow_AllFrames(),
+para que devuelvan el Frame con error, en lugar de la cadena de error. Así se
+puede identificar al Frame problemático.
+* Se agrega la asociación "tp_Enum_TRadGroup", para manejar controles TRadioGroup.
+* Se crean las funciones IdFromTTreeNode() y TTreeNodeFromId(), como una utilidad
+para ubicar a los nodos de un TTreeView, ya que es común usar un TTreeView como
+menú para seleccionar a los frames.
 
- Versión 0.3
- ===========
- Por Tito Hinostroza 21/08/2014
- *Se corrige la lectura de parámetros de tipo cadena por defecto. Se estaba truncando un
- caracter lateralmente
- *Se cambia el tipo TEdit a TCustomEdit en Asoc_Str_TEdit(), para que acepte diversos
- controles que descienden de TCustomEdit, además de TEdit.
- *Se pone ShowPos() como VIRTUAL.
- *Se agrega protección a intentar poner foco en control si es que el frame no está visible.
- *Se agrega la asociación tp_StrList_TListBox, para poder cargar un TStringList en un
- control TListBox.
-
+Descripción
+===========
+Unidad para interceptar la clase TFrame y usar un TFrame personalizado que facilite la
+administración de propiedades. Incluye el manejo de entrada y salida a archivos INI.
+Por Tito Hinostroza 10/07/2014
 }
 unit ConfigFrame;
 {$mode objfpc}{$H+}
 
 interface
-
 uses
-  Classes, SysUtils, Forms, StdCtrls, Spin, IniFiles, Dialogs, Graphics, Variants;
+  Classes, SysUtils, Forms, StdCtrls, ExtCtrls, Spin, IniFiles, Dialogs, ComCtrls, Graphics;
 
 const
 {  MSG_NO_INI_FOUND = 'No se encuentra archivo de configuración: ';
@@ -60,6 +59,7 @@ type
   ,tp_Bol_TChkB     //booleano asociado a CheckBox
   ,tp_TCol_TColBut  //TColor asociado a TColorButton
   ,tp_Enum_TRadBut  //Enumerado asociado a TRadioButton
+  ,tp_Enum_TRadGroup  //Enumerado asociado a TRadioGroup
   ,tp_Bol_TRadBut  //Booleano asociado a TRadioButton
   ,tp_Int           //Entero sin asociación
   ,tp_Bol           //Boleano sin asociación
@@ -119,6 +119,8 @@ type
                              defVal: TColor);
     procedure Asoc_Enum_TRadBut(ptrEnum: pointer; EnumSize: integer;
                     radButs: array of TRadioButton; etiq: string; defVal: integer);
+    procedure Asoc_Enum_TRadGroup(ptrEnum: pointer; EnumSize: integer;
+                    radGroup: TRadioGroup; etiq: string; defVal: integer);
     procedure Asoc_Bol_TRadBut(ptrBol: pointer;
                     radButs: array of TRadioButton; etiq: string; defVal: boolean);
     //métodos para agregar valores sin asociación a controles
@@ -138,8 +140,10 @@ type
   procedure Hide_AllConfigFrames(form: TForm);
   function ReadFileToProp_AllFrames(form: TForm; arIni: string): string;
   function SavePropToFile_AllFrames(form: TForm; arIni: string): string;
-  function WindowToProp_AllFrames(form: TForm): string;
-  function PropToWindow_AllFrames(form: TForm): string;
+  function WindowToProp_AllFrames(form: TForm): TFrame;
+  function PropToWindow_AllFrames(form: TForm): TFrame;
+  function IdFromTTreeNode(node: TTreeNode): string;
+  function TTreeNodeFromId(Id: string; tree: TTreeView): TTreeNode;
 
 
 implementation
@@ -154,7 +158,7 @@ begin
   else
      Result := false;
 end;
-function ListOfFrames(form: TForm): Tlistframes;
+function ListOfFrames(form: TForm): TlistFrames;
 //Devuelve la lista de frames del tipo TFrame declarado aquí
 var
   i: Integer;
@@ -245,33 +249,82 @@ begin
     appIni.Free;                   //libera
   end;
 end;
-function WindowToProp_AllFrames(form: TForm): string;
+function WindowToProp_AllFrames(form: TForm): TFrame;
 //Llama al método WindowToProp de todos los frames de configuración.
-//Si encuentra error devuelve el mensaje.
+//Si encuentra error devuelve el Frame que produjo el error.
 var
   f: TFrame;
 begin
-  Result := '';
+  Result := nil;
   //Fija propiedades de los controles
   for f in ListOfFrames(form) do begin
     f.WindowToProp;
-    Result := f.MsjErr;
-    if Result<>'' then exit;
+    if f.MsjErr<>'' then exit(f);
   end;
 end;
-function PropToWindow_AllFrames(form: TForm): string;
+function PropToWindow_AllFrames(form: TForm): TFrame;
 //Llama al método PropToWindow de todos los frames de configuración.
-//Si encuentra error devuelve el mensaje.
+//Si encuentra error devuelve el Frame que produjo el error.
 var
   f: TFrame;
 begin
-  Result := '';
+  Result := nil;
   //llama a PropToWindow() de todos los PropertyFrame.Frames
   for f in ListOfFrames(form) do begin
     f.PropToWindow;
-    Result := f.MsjErr;
-    if Result<>'' then exit;
+    if f.MsjErr<>'' then exit(f);
   end;
+end;
+function IdFromTTreeNode(node: TTreeNode): string;
+//Returns an ID with indication of the position of a TTreeNode'.
+//It has the form: 1, 1.1, 1.2. Only works for two levels.
+var
+  nivel: Integer;
+begin
+  nivel := node.Level;
+  if nivel = 1 then  //de dos niveles
+    Result := IntToStr(node.Parent.Index+1) + '.' +
+             IntToStr(node.Index+1)
+  else  //de un nivel
+    Result := IntToStr(node.Index+1);
+end;
+function TTreeNodeFromId(Id: string; tree: TTreeView): TTreeNode;
+//Returns a TreeNode, given the ID position. If not found, returns NIL.
+//Only works for two levels.
+var
+  list: TStringList;
+  it: TTreeNode;
+  Padre: TTreeNode;
+  i: Integer;
+begin
+  Result := nil;  //por defecto
+  if Id='' then exit;
+  list := TStringList.Create;
+  list.Delimiter:='.';
+  list.DelimitedText:=Id;
+  if list.Count = 1 then begin  //de un solo nivel
+    //ubica el nodo
+    for it in Tree.Items do if it.Level=0 then begin
+        if IntToStr(it.Index+1) = list[0] then Result := it;
+    end;
+  end else begin  //de dos o más niveles
+    //ubica al nodo padre
+    Padre := nil;
+    for it in Tree.Items do begin
+      if it.Level=0 then begin
+        if IntToStr(it.Index+1) = list[0] then Padre := it;
+      end;
+    end;
+    if Padre = nil then exit;  //no lo ubica
+    //ubica al nodo hijo
+    for i := 0 to Padre.Count-1 do begin
+      it := Padre.Items[i];
+      if it.Level=1 then begin
+        if IntToStr(it.Index+1) = list[0] then Result := it;
+      end;
+    end;
+  end;
+  list.Destroy;
 end;
 
 function WriteStr(s:string): string;
@@ -351,6 +404,16 @@ begin
             n:= Int32(r.Pvar^);  //convierte a entero
             if n<=High(r.radButs) then
               r.radButs[n].checked := true;  //lo activa
+          end else begin  //tamño no implementado
+            msjErr := MSG_NO_IMP_ENUM_T;
+            exit;
+          end;
+       end;
+    tp_Enum_TRadGroup: begin
+          if r.lVar = 4 then begin  //enumerado de 4 bytes
+            n:= Int32(r.Pvar^);  //convierte a entero
+            if n<TRadioGroup(r.pCtl).Items.Count then
+              TRadioGroup(r.pCtl).ItemIndex:=n; //activa
           end else begin  //tamño no implementado
             msjErr := MSG_NO_IMP_ENUM_T;
             exit;
@@ -436,6 +499,16 @@ begin
              end;
           end;
        end;
+    tp_Enum_TRadGroup: begin //TRadioButtons a Enumerado
+          //debe fijar el valor del enumerado
+          if r.lVar = 4 then begin  //se puede manejar como entero
+            Int32(r.Pvar^) := TRadioGroup(r.pCtl).ItemIndex;  //lee
+            break;
+          end else begin  //tamaño no implementado
+            msjErr := MSG_NO_IMP_ENUM_T;
+            exit;
+          end;
+       end;
     tp_Bol_TRadBut: begin //TRadioButtons a Enumerado
           //busca el que está marcado
           if high(r.radButs)>=1 then begin
@@ -486,6 +559,14 @@ begin
          TColor(r.Pvar^) := arcINI.ReadInteger(secINI, r.etiqVar, r.defCol);
        end;
     tp_Enum_TRadBut: begin  //lee enumerado como entero
+         if r.lVar = 4 then begin
+           Int32(r.Pvar^) := arcINI.ReadInteger(secINI, r.etiqVar, r.defEnt);
+         end else begin  //tamaño no implementado
+           msjErr := MSG_NO_IMP_ENUM_T;
+           exit;
+         end;
+       end;
+    tp_Enum_TRadGroup: begin  //lee enumerado como entero
          if r.lVar = 4 then begin
            Int32(r.Pvar^) := arcINI.ReadInteger(secINI, r.etiqVar, r.defEnt);
          end else begin  //tamaño no implementado
@@ -561,6 +642,15 @@ begin
          arcINI.WriteInteger(secINI, r.etiqVar, c);
        end;
     tp_Enum_TRadBut: begin  //escribe enumerado
+       if r.lVar = 4 then begin
+         n := Int32(r.Pvar^);   //lo guarda como entero
+         arcINI.WriteInteger(secINI, r.etiqVar, n);
+       end else begin  //tamaño no implementado
+         msjErr := MSG_NO_IMP_ENUM_T;
+         exit;
+       end;
+    end;
+    tp_Enum_TRadGroup: begin  //escribe enumerado
        if r.lVar = 4 then begin
          n := Int32(r.Pvar^);   //lo guarda como entero
          arcINI.WriteInteger(secINI, r.etiqVar, n);
@@ -704,8 +794,8 @@ procedure TFrame.Asoc_Col_TColBut(ptrInt: pointer; colBut: TColorButton; etiq: s
 var n: integer;
   r: TParElem;
 begin
-  r.pVar   := ptrInt;  //toma referencia
-  r.pCtl   := colBut;    //toma referencia
+  r.pVar   := ptrInt;    //toma referencia
+  r.pCtl   := colBut;    //toma referencia a control
   r.tipPar := tp_TCol_TColBut;  //tipo de par
   r.etiqVar:= etiq;
   r.defCol := defVal;
@@ -732,6 +822,25 @@ begin
   setlength(r.radButs,high(radButs)+1);  //hace espacio
   for i:=0 to high(radButs) do
     r.radButs[i]:= radButs[i];
+
+  //agrega
+  n := high(listParElem)+1;    //número de elementos
+  setlength(listParElem, n+1);  //hace espacio
+  listParElem[n] := r;          //agrega
+end;
+procedure TFrame.Asoc_Enum_TRadGroup(ptrEnum: pointer; EnumSize: integer;
+  radGroup: TRadioGroup; etiq: string; defVal: integer);
+//Agrega un par variable Enumerated - Control TRadioGroup
+//Solo se permiten enumerados de hasta 32 bits de tamaño
+var n: integer;
+  r: TParElem;
+begin
+  r.pVar   := ptrEnum;   //toma referencia
+  r.lVar   :=EnumSize;   //necesita el tamaño para modificarlo luego
+  r.pCtl   := radGroup;  //toma referencia a control
+  r.tipPar := tp_Enum_TRadGroup;  //tipo de par
+  r.etiqVar:= etiq;
+  r.defEnt := defVal;   //se maneja como entero
 
   //agrega
   n := high(listParElem)+1;    //número de elementos

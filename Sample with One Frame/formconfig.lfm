@@ -9,7 +9,7 @@ object Config: TConfig
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  LCLVersion = '1.2.0.3'
+  LCLVersion = '1.2.4.0'
   object BitCancel: TBitBtn
     Left = 328
     Height = 30

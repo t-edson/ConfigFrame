@@ -31,6 +31,7 @@ type
     { private declarations }
   public
     msjError: string;    //para los mensajes de error
+    fraError: TFrame;
     arIni   : String;      //Archivo de configuración
     //************  Modificar Aquí ***************//
     //frames de configuración
@@ -71,14 +72,15 @@ end;
 procedure TConfig.BitAceptarClick(Sender: TObject);
 begin
   bitAplicarClick(Self);
-  if msjError='' then self.Close;  //sale si no hay error
+  if fraError<>nil then exit;  //hubo error
+  self.Close;  //sale si no hay error
 end;
 
 procedure TConfig.BitAplicarClick(Sender: TObject);
 begin
   LeerDeVentana;       //Escribe propiedades de los frames
-  if msjError<>'' then begin
-    showmessage(msjError);
+  if fraError<>nil then begin
+    showmessage(fraError.MsjErr);
     exit;
   end;
   escribirArchivoIni;   //guarda propiedades en disco
@@ -127,13 +129,13 @@ end;
 procedure TConfig.LeerDeVentana;
 //Lee las propiedades de la ventana de configuración.
 begin
-  msjError := WindowToProp_AllFrames(self);
+  fraError := WindowToProp_AllFrames(self);
 end;
 
 procedure TConfig.MostEnVentana;
 //Muestra las propiedades en la ventana de configuración.
 begin
-  msjError := PropToWindow_AllFrames(self);
+  fraError := PropToWindow_AllFrames(self);
 end;
 
 procedure TConfig.leerArchivoIni;

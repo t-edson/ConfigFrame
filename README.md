@@ -1,4 +1,4 @@
-ConfigFrame 0.3
+ConfigFrame 0.4
 ===============
 
 ConfigFrame is a Lazarus unit that can be used for to create quick configuration dialogs.
@@ -80,3 +80,24 @@ procedure Asoc_StrList(ptrStrList: pointer; etiq: string);
 ```
 
 Two sample projects are included, one with one frame on a config form, and other with several frames on a config form.
+
+ConfigFrame, can be see too, like a small Framework, because it defines some rules for the creation of Configuration's dialogs:
+
+* It must be one INI file and one Config Dialog. Although it's possible to create several config files, it is recommended to maintain the relation: 
+INI File <-> Configuración Dialog.
+
+* One config dialog can contain one or more frames ('Configuration frame'). When we have more than one, we can use a ListBox control or some other control for to select the  working frame.
+
+* The Configuration frames must be created and destroyed dynamically on the Configuration frame.
+
+* Each Configuration frame must contain one set of properties related. For example we can have a frame for to save the general properties and other for to save the editor properties, and ... 
+
+* The Configuration frames are commonly created using the Lazarus visual editor, using the controls required for to manage the variables of the frame.
+ 
+* The Config Dialog, and the Configuration frames must include the unit "ConfigFrame", in order to use the new definition for TFrame. This unit must be included at  the end of the USES section for to intercept the definition of the class TFrame.
+
+It's also recommended use standard names for the objects. We can use these rules:
+
+* The units where the  Configuration Frames are defined, must be called frameCfg<XXX>. Where  <XXX> is the part of the name whta identify the function of the frame. For Example frameCfgColors, frameCfgMainEdit
+
+* The Config Dialog (Where the Configuration Frames are included), must have the name FormConfig, and the Form must have the name 'Config'.
