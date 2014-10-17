@@ -96,10 +96,10 @@ ConfigFrame, puede ser visto también, como un sencillo marco de trabajo (framew
 
 Para los nombres de objetos, ee recomienda las siguientes normas:
 
-* Las unidades donde se definen los frame de configuración deben llamarse frameCfg<XXX>. Donde <XXX> es la parte del nombre que define la función. Por ejemplo frameCfgColores, frameCfgMainEdit
+* Las unidades donde se definen los frame de configuración deben llamarse frameCfg{XXX}. Donde {XXX} es la parte del nombre que define la función. Por ejemplo frameCfgColores, frameCfgMainEdit
 
 * La unidad donde se define al formulario  de configuración (en donde se incluirán los frames de configuración), se llamará FormConfig, y el formulario se debe llamar Config.
 
-* Los frame de configuración creados en el formulario de configuración, se deben llamar fc<XXX>.
+* Los frame de configuración creados en el formulario de configuración, se deben llamar fc{XXX}.
 
 Se pueden usar los programas de ejemplo como una plantilla de trabajo.
