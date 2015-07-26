@@ -50,23 +50,27 @@ Y aún con este código tan simple, el frame permitirá editar el valor de la va
 
 Existen diversos métodos para asociar variables a controles:
 ```
-procedure Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
-						 defVal: integer; minVal, maxVal: integer);
-procedure Asoc_Int_TSpinEdit(ptrInt: pointer; spEdit: TSpinEdit; etiq: string;
-						 defVal, minVal, maxVal: integer);
-procedure Asoc_Str_TEdit(ptrStr: pointer; edit: TCustomEdit; etiq: string;
-						 defVal: string);
-procedure Asoc_Str_TCmbBox(ptrStr: pointer; cmbBox: TComboBox; etiq: string;
-						 defVal: string);
-procedure Asoc_StrList_TListBox(ptrStrList: pointer; lstBox: TlistBox; etiq: string);
-procedure Asoc_Bol_TChkBox(ptrBol: pointer; chk: TCheckBox; etiq: string;
-						 defVal: boolean);
-procedure Asoc_Col_TColBut(ptrInt: pointer; colBut: TColorButton; etiq: string;
-						 defVal: TColor);
-procedure Asoc_Enum_TRadBut(ptrEnum: pointer; EnumSize: integer;
-				radButs: array of TRadioButton; etiq: string; defVal: integer);
-procedure Asoc_Bol_TRadBut(ptrBol: pointer;
-				radButs: array of TRadioButton; etiq: string; defVal: boolean);
+    procedure Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
+                             defVal: integer; minVal, maxVal: integer);
+    procedure Asoc_Int_TSpinEdit(ptrInt: pointer; spEdit: TSpinEdit; etiq: string;
+                             defVal, minVal, maxVal: integer);
+    procedure Asoc_Str_TEdit(ptrStr: pointer; edit: TCustomEdit; etiq: string;
+                             defVal: string);
+    procedure Asoc_Str_TEditButton(ptrStr: pointer; edit: TCustomEditButton; etiq: string;
+                             defVal: string);
+    procedure Asoc_Str_TCmbBox(ptrStr: pointer; cmbBox: TComboBox; etiq: string;
+                             defVal: string);
+    procedure Asoc_StrList_TListBox(ptrStrList: pointer; lstBox: TlistBox; etiq: string);
+    procedure Asoc_Bol_TChkBox(ptrBol: pointer; chk: TCheckBox; etiq: string;
+                             defVal: boolean);
+    procedure Asoc_Col_TColBut(ptrInt: pointer; colBut: TColorButton; etiq: string;
+                             defVal: TColor);
+    procedure Asoc_Enum_TRadBut(ptrEnum: pointer; EnumSize: integer;
+                    radButs: array of TRadioButton; etiq: string; defVal: integer);
+    procedure Asoc_Enum_TRadGroup(ptrEnum: pointer; EnumSize: integer;
+                    radGroup: TRadioGroup; etiq: string; defVal: integer);
+    procedure Asoc_Bol_TRadBut(ptrBol: pointer;
+                    radButs: array of TRadioButton; etiq: string; defVal: boolean);
 ```
 
 También, si tan solo queremos almacenar las variables en un archivo INI, existen los métodos apropiados:
