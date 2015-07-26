@@ -1,14 +1,20 @@
 {
-ConfigFrame 0.4
+ConfigFrame 0.51
 ==================
-Por Tito Hinostroza 03/09/2014
-* Se cambia la definición de WindowToProp_AllFrames(), y PropToWindow_AllFrames(),
-para que devuelvan el Frame con error, en lugar de la cadena de error. Así se
-puede identificar al Frame problemático.
-* Se agrega la asociación "tp_Enum_TRadGroup", para manejar controles TRadioGroup.
-* Se crean las funciones IdFromTTreeNode() y TTreeNodeFromId(), como una utilidad
-para ubicar a los nodos de un TTreeView, ya que es común usar un TTreeView como
-menú para seleccionar a los frames.
+Por Tito Hinostroza 03/05/2015
+* Se cambia de nombre a tp_Int_TSpnEdit por tp_Int_TSpinEdit, para que sea más
+consistente con el nombre de la clase.
+* Se cambia de nombre a tp_Bol_TChkB por tp_Bol_TCheckBox, para que sea más
+consistente con el nombre de la clase.
+* Se cambia de nombre a Asoc_Int_TSpnEdi() y a Asoc_Bol_TChkB() para hacerlos más
+consistentes con el nombre del control que asocian.
+* Se simplifica el código creando el método AgregAsoc(r).
+* Se crea el método Asoc_Str_TEditButton(), para poder asociar controles de tipo
+TFileNameEdit y TDirectoryEdit a cadenas. Esto es necesario porque en la versión
+1.4 de Lazarus, estos controles ya no derivan de TEdit.
+
+Básicamente lo que se ha hecho en esta versión es adaptarla para trabajar con Lazarus
+1.4, y ordenar un poco el código.
 
 Descripción
 ===========
@@ -21,7 +27,8 @@ unit ConfigFrame;
 
 interface
 uses
-  Classes, SysUtils, Forms, StdCtrls, ExtCtrls, Spin, IniFiles, Dialogs, ComCtrls, Graphics;
+  Classes, SysUtils, Forms, StdCtrls, ExtCtrls, Spin, IniFiles, Dialogs,
+  ComCtrls, Graphics, EditBtn;
 
 const
 {  MSG_NO_INI_FOUND = 'No se encuentra archivo de configuración: ';
@@ -51,23 +58,24 @@ const
 type
   //Tipos de asociaciones
   TTipPar = (
-   tp_Int_TEdit     //entero asociado a TEdit
-  ,tp_Int_TSpnEdit  //entero asociado a TSpinEdit
-  ,tp_Str_TEdit     //string asociado a TEdit
-  ,tp_Str_TCmbBox   //string asociado a TComboBox
-  ,tp_StrList_TListBox   //StringList asociado a TListBox
-  ,tp_Bol_TChkB     //booleano asociado a CheckBox
-  ,tp_TCol_TColBut  //TColor asociado a TColorButton
-  ,tp_Enum_TRadBut  //Enumerado asociado a TRadioButton
+   tp_Int_TEdit       //entero asociado a TEdit
+  ,tp_Int_TSpinEdit   //entero asociado a TSpinEdit
+  ,tp_Str_TEdit       //string asociado a TEdit
+  ,tp_Str_TEditButton //string asociado a TEditButton (ancestro de TFileNameEdit, TDirectoryEdit, ...)
+  ,tp_Str_TCmbBox     //string asociado a TComboBox
+  ,tp_StrList_TListBox //StringList asociado a TListBox
+  ,tp_Bol_TCheckBox   //booleano asociado a CheckBox
+  ,tp_TCol_TColBut    //TColor asociado a TColorButton
+  ,tp_Enum_TRadBut    //Enumerado asociado a TRadioButton
   ,tp_Enum_TRadGroup  //Enumerado asociado a TRadioGroup
-  ,tp_Bol_TRadBut  //Booleano asociado a TRadioButton
-  ,tp_Int           //Entero sin asociación
-  ,tp_Bol           //Boleano sin asociación
-  ,tp_Str           //String sin asociación
-  ,tp_StrList       //TStringList sin asociación
+  ,tp_Bol_TRadBut     //Booleano asociado a TRadioButton
+  ,tp_Int             //Entero sin asociación
+  ,tp_Bol             //Boleano sin asociación
+  ,tp_Str             //String sin asociación
+  ,tp_StrList         //TStringList sin asociación
   );
 
-  //Para variable, elemento
+  //Registro de asociación variable-control
   TParElem = record
     pVar: pointer;     //referencia a la variable
     lVar: integer;     //tamaño de variable. (Cuando no sea conocido)
@@ -89,6 +97,7 @@ type
 //  TFrame = class(TcustomFrame)   //TFrame personalizado
   private
     listParElem : array of TParElem;
+    procedure AgregAsoc(r: TParElem);
   protected
     valInt: integer;  //valor entero de salida
   public
@@ -103,17 +112,19 @@ type
     procedure WindowToProp; virtual;
     procedure ReadFileToProp(var arcINI: TIniFile); virtual;
     procedure SavePropToFile(var arcINI: TIniFile); virtual;
-    //métodos para agregar pares- variable-control
+    //Métodos para asociar pares: variable-control
     procedure Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
                              defVal: integer; minVal, maxVal: integer);
-    procedure Asoc_Int_TSpnEdi(ptrInt: pointer; spEdit: TSpinEdit; etiq: string;
+    procedure Asoc_Int_TSpinEdit(ptrInt: pointer; spEdit: TSpinEdit; etiq: string;
                              defVal, minVal, maxVal: integer);
     procedure Asoc_Str_TEdit(ptrStr: pointer; edit: TCustomEdit; etiq: string;
+                             defVal: string);
+    procedure Asoc_Str_TEditButton(ptrStr: pointer; edit: TCustomEditButton; etiq: string;
                              defVal: string);
     procedure Asoc_Str_TCmbBox(ptrStr: pointer; cmbBox: TComboBox; etiq: string;
                              defVal: string);
     procedure Asoc_StrList_TListBox(ptrStrList: pointer; lstBox: TlistBox; etiq: string);
-    procedure Asoc_Bol_TChkB(ptrBol: pointer; chk: TCheckBox; etiq: string;
+    procedure Asoc_Bol_TChkBox(ptrBol: pointer; chk: TCheckBox; etiq: string;
                              defVal: boolean);
     procedure Asoc_Col_TColBut(ptrInt: pointer; colBut: TColorButton; etiq: string;
                              defVal: TColor);
@@ -147,6 +158,18 @@ type
 
 
 implementation
+//Funciones de uso interno
+function WriteStr(s:string): string;
+//Protege a una cadena para que no pierda los espacios laterales si es que los tiene,
+//porque el el archivo INI se pierden.
+begin
+  Result:='.'+s+'.';
+end;
+function ReadStr(s:string): string;
+//Quita la protección a una cadena que ha sido guardada en un archivo INI
+begin
+  Result:=copy(s,2,length(s)-2);
+end;
 //Utilidades para el formulario de configuración
 function IsFrameProperty(c: TComponent): boolean;
 //Permite identificar si un componente es un Frame creado a partir de TFrame de
@@ -327,16 +350,13 @@ begin
   list.Destroy;
 end;
 
-function WriteStr(s:string): string;
-//Protege a una cadena para que no pierda los espacios laterales si es que los tiene,
-//porque el el archivo INI se pierden.
+procedure TFrame.AgregAsoc(r: TParElem);
+//Agrega una asociación a listParElem[]
+var n: integer;
 begin
-  Result:='.'+s+'.';
-end;
-function ReadStr(s:string): string;
-//Quita la protección a una cadena que ha sido guardada en un archivo INI
-begin
-  Result:=copy(s,2,length(s)-2);
+  n := high(listParElem)+1;    //número de elementos
+  setlength(listParElem, n+1);  //hace espacio
+  listParElem[n] := r;          //agrega
 end;
 constructor TFrame.Create(TheOwner: TComponent);
 begin
@@ -369,7 +389,7 @@ begin
           n:= Integer(r.Pvar^);
           TEdit(r.pCtl).Text:=IntToStr(n);
        end;
-    tp_Int_TSpnEdit: begin  //entero en TSpinEdit
+    tp_Int_TSpinEdit: begin  //entero en TSpinEdit
           //carga entero
           n:= Integer(r.Pvar^);
           TSpinEdit(r.pCtl).Value:=n;
@@ -379,6 +399,11 @@ begin
           s:= String(r.Pvar^);
           TEdit(r.pCtl).Text:=s;
        end;
+    tp_Str_TEditButton: begin
+        //carga cadena
+        s:= String(r.Pvar^);
+        TEditButton(r.pCtl).Text:=s;
+      end;
     tp_Str_TCmbBox: begin  //cadena en TComboBox
           //carga cadena
           s:= String(r.Pvar^);
@@ -391,7 +416,7 @@ begin
          for j:=0 to list.Count-1 do
            TListBox(r.pCtl).AddItem(list[j],nil);
       end;
-    tp_Bol_TChkB: begin //boolean a TCheckBox
+    tp_Bol_TCheckBox: begin //boolean a TCheckBox
           b := boolean(r.Pvar^);
           TCheckBox(r.pCtl).Checked := b;
        end;
@@ -452,7 +477,7 @@ begin
             exit;   //hubo error. con mensaje en "msjErr"
           Integer(r.Pvar^) := valInt;  //guarda
        end;
-    tp_Int_TSpnEdit: begin   //entero de TSpinEdit
+    tp_Int_TSpinEdit: begin   //entero de TSpinEdit
           spEd := TSpinEdit(r.pCtl);
           if spEd.Value < r.minEnt then begin
             MsjErr:=MSG_MIN_VAL_IS+IntToStr(r.minEnt);
@@ -469,6 +494,9 @@ begin
     tp_Str_TEdit: begin  //cadena de TEdit
           String(r.Pvar^) := TEdit(r.pCtl).Text;
        end;
+    tp_Str_TEditButton: begin  //cadena de TEditButton;
+          String(r.Pvar^) := TEditButton(r.pCtl).Text;
+       end;
     tp_Str_TCmbBox: begin //cadena de TComboBox
           String(r.Pvar^) := TComboBox(r.pCtl).Text;
        end;
@@ -478,7 +506,7 @@ begin
           for j:= 0 to TListBox(r.pCtl).Count-1 do
             list.Add(TListBox(r.pCtl).Items[j]);
        end;
-    tp_Bol_TChkB: begin  //boolean de  CheckBox
+    tp_Bol_TCheckBox: begin  //boolean de  CheckBox
           boolean(r.Pvar^) := TCheckBox(r.pCtl).Checked;
        end;
     tp_TCol_TColBut: begin //TColor a TColorButton
@@ -540,10 +568,13 @@ begin
     tp_Int_TEdit:  begin  //lee entero
          Integer(r.Pvar^) := arcINI.ReadInteger(secINI, r.etiqVar, r.defEnt);
        end;
-    tp_Int_TSpnEdit: begin  //lee entero
+    tp_Int_TSpinEdit: begin  //lee entero
          Integer(r.Pvar^) := arcINI.ReadInteger(secINI, r.etiqVar, r.defEnt);
        end;
     tp_Str_TEdit: begin  //lee cadena
+         String(r.Pvar^) := ReadStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
+       end;
+    tp_Str_TEditButton: begin  //lee cadena
          String(r.Pvar^) := ReadStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
        end;
     tp_Str_TCmbBox: begin  //lee cadena
@@ -552,7 +583,7 @@ begin
     tp_StrList_TListBox: begin //lee TStringList
          arcINI.ReadSection(secINI+'_'+r.etiqVar,TStringList(r.Pvar^));
        end;
-    tp_Bol_TChkB: begin  //lee booleano
+    tp_Bol_TCheckBox: begin  //lee booleano
          boolean(r.Pvar^) := arcINI.ReadBool(secINI, r.etiqVar, r.defBol);
        end;
     tp_TCol_TColBut: begin  //lee TColor
@@ -615,11 +646,15 @@ begin
          n := Integer(r.Pvar^);
          arcINI.WriteInteger(secINI, r.etiqVar, n);
        end;
-    tp_Int_TSpnEdit: begin //escribe entero
+    tp_Int_TSpinEdit: begin //escribe entero
          n := Integer(r.Pvar^);
          arcINI.WriteInteger(secINI, r.etiqVar, n);
        end;
     tp_Str_TEdit: begin //escribe cadena
+         s := String(r.Pvar^);
+         arcINI.WriteString(secINI, r.etiqVar,WriteStr(s));
+       end;
+    tp_Str_TEditButton: begin //escribe cadena
          s := String(r.Pvar^);
          arcINI.WriteString(secINI, r.etiqVar,WriteStr(s));
        end;
@@ -633,7 +668,7 @@ begin
           for j:= 0 to strlst.Count-1 do
             arcINI.WriteString(secINI+'_'+r.etiqVar,strlst[j],'');
        end;
-    tp_Bol_TChkB: begin  //escribe booleano
+    tp_Bol_TCheckBox: begin  //escribe booleano
          b := boolean(r.Pvar^);
          arcINI.WriteBool(secINI, r.etiqVar, b);
        end;
@@ -687,10 +722,11 @@ begin
     end;
   end;
 end;
+//Métodos de asociación
 procedure TFrame.Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
   defVal: integer; minVal, maxVal: integer);
 //Agrega un para variable entera - Control TEdit
-var n: integer;
+var
   r: TParElem;
 begin
   r.pVar   := ptrInt;  //toma referencia
@@ -700,33 +736,27 @@ begin
   r.defEnt := defVal;
   r.minEnt := minVal;    //protección de rango
   r.maxEnt := maxVal;    //protección de rango
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_Int_TSpnEdi(ptrInt: pointer; spEdit: TSpinEdit;
+procedure TFrame.Asoc_Int_TSpinEdit(ptrInt: pointer; spEdit: TSpinEdit;
   etiq: string; defVal, minVal, maxVal: integer);
 //Agrega un para variable entera - Control TSpinEdit
-var n: integer;
+var
   r: TParElem;
 begin
   r.pVar   := ptrInt;  //toma referencia
   r.pCtl   := spEdit;    //toma referencia
-  r.tipPar := tp_Int_TSpnEdit;  //tipo de par
+  r.tipPar := tp_Int_TSpinEdit;  //tipo de par
   r.etiqVar:= etiq;
   r.defEnt := defVal;
   r.minEnt := minVal;    //protección de rango
   r.maxEnt := maxVal;    //protección de rango
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
 procedure TFrame.Asoc_Str_TEdit(ptrStr: pointer; edit: TCustomEdit;
   etiq: string; defVal: string);
 //Agrega un par variable string - Control TEdit
-var n: integer;
+var
   r: TParElem;
 begin
   r.pVar   := ptrStr;  //toma referencia
@@ -734,15 +764,25 @@ begin
   r.tipPar := tp_Str_TEdit;  //tipo de par
   r.etiqVar:= etiq;
   r.defStr := defVal;
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
+end;
+procedure TFrame.Asoc_Str_TEditButton(ptrStr: pointer; edit: TCustomEditButton;
+  etiq: string; defVal: string);
+//Agrega un par variable string - Control TEditButton
+var
+  r: TParElem;
+begin
+  r.pVar   := ptrStr;  //toma referencia
+  r.pCtl   := edit;    //toma referencia
+  r.tipPar := tp_Str_TEditButton;  //tipo de par
+  r.etiqVar:= etiq;
+  r.defStr := defVal;
+  AgregAsoc(r);          //agrega
 end;
 procedure TFrame.Asoc_Str_TCmbBox(ptrStr: pointer; cmbBox: TComboBox; etiq: string;
   defVal: string);
 //Agrega un par variable string - Control TEdit
-var n: integer;
+var
   r: TParElem;
 begin
   r.pVar   := ptrStr;     //toma referencia
@@ -750,15 +790,11 @@ begin
   r.tipPar := tp_Str_TCmbBox;  //tipo de par
   r.etiqVar:= etiq;
   r.defStr := defVal;
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
-
 procedure TFrame.Asoc_StrList_TListBox(ptrStrList: pointer; lstBox: TlistBox;
   etiq: string);
-var n: integer;
+var
   r: TParElem;
 begin
   r.pVar   := ptrStrList;  //toma referencia
@@ -766,32 +802,25 @@ begin
   r.tipPar := tp_StrList_TlistBox;  //tipo de par
   r.etiqVar:= etiq;
 //  r.defCol := defVal;
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
-
-procedure TFrame.Asoc_Bol_TChkB(ptrBol: pointer; chk: TCheckBox; etiq: string;
+procedure TFrame.Asoc_Bol_TChkBox(ptrBol: pointer; chk: TCheckBox; etiq: string;
   defVal: boolean);
 //Agrega un para variable booleana - Control TCheckBox
-var n: integer;
+var
   r: TParElem;
 begin
   r.pVar   := ptrBol;  //toma referencia
   r.pCtl   := chk;    //toma referencia
-  r.tipPar := tp_Bol_TChkB;  //tipo de par
+  r.tipPar := tp_Bol_TCheckBox;  //tipo de par
   r.etiqVar:= etiq;
   r.defBol := defVal;
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
 procedure TFrame.Asoc_Col_TColBut(ptrInt: pointer; colBut: TColorButton; etiq: string;
   defVal: TColor);
 //Agrega un par variable TColor - Control TColorButton
-var n: integer;
+var
   r: TParElem;
 begin
   r.pVar   := ptrInt;    //toma referencia
@@ -799,16 +828,13 @@ begin
   r.tipPar := tp_TCol_TColBut;  //tipo de par
   r.etiqVar:= etiq;
   r.defCol := defVal;
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
 procedure TFrame.Asoc_Enum_TRadBut(ptrEnum: pointer; EnumSize: integer;
   radButs: array of TRadioButton; etiq: string; defVal: integer);
 //Agrega un par variable Enumerated - Controles TRadioButton
 //Solo se permiten enumerados de hasta 32 bits de tamaño
-var n: integer;
+var
   r: TParElem;
   i: Integer;
 begin
@@ -823,16 +849,13 @@ begin
   for i:=0 to high(radButs) do
     r.radButs[i]:= radButs[i];
 
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
 procedure TFrame.Asoc_Enum_TRadGroup(ptrEnum: pointer; EnumSize: integer;
   radGroup: TRadioGroup; etiq: string; defVal: integer);
 //Agrega un par variable Enumerated - Control TRadioGroup
 //Solo se permiten enumerados de hasta 32 bits de tamaño
-var n: integer;
+var
   r: TParElem;
 begin
   r.pVar   := ptrEnum;   //toma referencia
@@ -842,17 +865,13 @@ begin
   r.etiqVar:= etiq;
   r.defEnt := defVal;   //se maneja como entero
 
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
-
 procedure TFrame.Asoc_Bol_TRadBut(ptrBol: pointer;
   radButs: array of TRadioButton; etiq: string; defVal: boolean);
 //Agrega un par variable Enumerated - Controles TRadioButton
 //Solo se permiten enumerados de hasta 32 bits de tamaño
-var n: integer;
+var
   r: TParElem;
   i: Integer;
 begin
@@ -865,15 +884,12 @@ begin
   setlength(r.radButs,high(radButs)+1);  //hace espacio
   for i:=0 to high(radButs) do
     r.radButs[i]:= radButs[i];
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
 
 procedure TFrame.Asoc_Int(ptrInt: pointer; etiq: string; defVal: integer);
 //Agrega una variable Entera para guardarla en el archivo INI.
-var n: integer;
+var
   r: TParElem;
 begin
   r.pVar   := ptrInt;  //toma referencia
@@ -881,14 +897,11 @@ begin
   r.tipPar := tp_Int;  //tipo de par
   r.etiqVar:= etiq;
   r.defEnt := defVal;
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
 procedure TFrame.Asoc_Bol(ptrBol: pointer; etiq: string; defVal: boolean);
 //Agrega una variable String para guardarla en el archivo INI.
-var n: integer;
+var
   r: TParElem;
 begin
   r.pVar   := ptrBol;  //toma referencia
@@ -896,14 +909,11 @@ begin
   r.tipPar := tp_Bol;  //tipo de par
   r.etiqVar:= etiq;
   r.defBol := defVal;
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
 procedure TFrame.Asoc_Str(ptrStr: pointer; etiq: string; defVal: string);
 //Agrega una variable String para guardarla en el archivo INI.
-var n: integer;
+var
   r: TParElem;
 begin
   r.pVar   := ptrStr;  //toma referencia
@@ -911,15 +921,12 @@ begin
   r.tipPar := tp_Str;  //tipo de par
   r.etiqVar:= etiq;
   r.defStr := defVal;
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
 procedure TFrame.Asoc_StrList(ptrStrList: pointer; etiq: string);
 //Agrega una variable TStringList para guardarla en el archivo INI. El StrinList, debe estar
 //ya creado, sino dará error.
-var n: integer;
+var
   r: TParElem;
 begin
   r.pVar   := ptrStrList;  //toma referencia
@@ -927,10 +934,7 @@ begin
   r.tipPar := tp_StrList;  //tipo de par
   r.etiqVar:= etiq;
 //  r.defCol := defVal;
-  //agrega
-  n := high(listParElem)+1;    //número de elementos
-  setlength(listParElem, n+1);  //hace espacio
-  listParElem[n] := r;          //agrega
+  AgregAsoc(r);          //agrega
 end;
 
 procedure TFrame.ShowPos(x, y: integer);
@@ -941,14 +945,13 @@ begin
   Self.Visible:=true;
 end;
 function TFrame.EditValidateInt(edit: TEdit; min: integer; max: integer): boolean;
-//Velida el contenido de un TEdit, para ver si se peude convertir a un valor entero.
+//Velida el contenido de un TEdit, para ver si se puede convertir a un valor entero.
 //Si no se puede convertir, devuelve FALSE, devuelve el mensaje de error en "MsjErr", y
 //pone el TEdit con enfoque.
 //Si se puede convertir, devuelve TRUE, y el valor convertido en "valEnt".
 var
   tmp : string;
   c : char;
-  v: int64;
   signo: string;
   larMaxInt: Integer;
   n: Int64;

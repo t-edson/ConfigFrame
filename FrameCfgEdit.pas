@@ -12,13 +12,11 @@ interface
 
 uses
   Classes, SysUtils, Forms, StdCtrls, Dialogs,
-  Spin, SynEdit, Graphics, SynEditMarkupHighAll, SynEditMarkup,
-  SynFacilHighlighter
+  Spin, SynEdit, Graphics, SynEditMarkupHighAll, SynEditMarkup
   ,ConfigFrame;   //para interceptar TFrame;
 type
 
   { TfcEdit }
-
   TfcEdit = class(TFrame)
     cbutFonPan: TColorButton;
     cbutResPal: TColorButton;
@@ -82,7 +80,8 @@ type
 
 implementation
 {$R *.lfm}
-const MAX_ARC_REC = 5;  //si se cambia, actualizar ActualMenusReciente()
+//const
+//  MAX_ARC_REC = 5;  //si se cambia, actualizar ActualMenusReciente()
 
 { TfcEdit }
 procedure TfcEdit.Iniciar(secINI0: string; ed0: TSynEdit;
@@ -98,18 +97,18 @@ begin
   Asoc_Col_TColBut(@cLinAct, cbutLinAct, 'cLinAct',clYellow);
   Asoc_Col_TColBut(@cResPal, cbutResPal, 'cResPal',clSkyBlue);
 
-  Asoc_Bol_TChkB(@VerBarDesV,chkVerBarDesV,'VerBarDesV',true);
-  Asoc_Bol_TChkB(@VerBarDesH,chkVerBarDesH,'VerBarDesH',false);
-  Asoc_Bol_TChkB(@ResPalCur,chkResPalCur,'ResPalCur',true);
-  Asoc_Bol_TChkB(@MarLinAct,chkMarLinAct,'MarLinAct',false);
+  Asoc_Bol_TChkBox(@VerBarDesV,chkVerBarDesV,'VerBarDesV',true);
+  Asoc_Bol_TChkBox(@VerBarDesH,chkVerBarDesH,'VerBarDesH',false);
+  Asoc_Bol_TChkBox(@ResPalCur,chkResPalCur,'ResPalCur',true);
+  Asoc_Bol_TChkBox(@MarLinAct,chkMarLinAct,'MarLinAct',false);
 
-  Asoc_Bol_TChkB(@VerPanVer, chkVerPanVer, 'VerPanVer',true);
-  Asoc_Bol_TChkB(@VerNumLin, chkVerNumLin, 'VerNumLin',false);
-  Asoc_Bol_TChkB(@VerMarPle, chkVerMarPle, 'VerMarPle',true);
+  Asoc_Bol_TChkBox(@VerPanVer, chkVerPanVer, 'VerPanVer',true);
+  Asoc_Bol_TChkBox(@VerNumLin, chkVerNumLin, 'VerNumLin',false);
+  Asoc_Bol_TChkBox(@VerMarPle, chkVerMarPle, 'VerMarPle',true);
   Asoc_Col_TColBut(@cFonPan, cbutFonPan, 'cFonPan',colFonDef);
   Asoc_Col_TColBut(@cTxtPan, cbutTxtPan, 'cTxtPan',clBlack);
 
-  Asoc_Int_TSpnEdi(@TamLet, spTam, 'TamLet', 10, 5, 20);
+  Asoc_Int_TSpinEdit(@TamLet, spTam, 'TamLet', 10, 5, 20);
 
   cmbTipoLetra.Items.Clear;
   cmbTipoLetra.Items.Add('Courier New');
@@ -161,10 +160,8 @@ begin
 end;
 procedure TfcEdit.ConfigEditor;
 {Configura el editor con las propiedades almacenadas}
-var hlt: TSynFacilSyn;
-  i: Integer;
+var
   marc: TSynEditMarkup;
-  tmp: String;
 begin
    if ed = nil then exit;  //protección
    //tipo de texto

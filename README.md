@@ -1,5 +1,5 @@
-ConfigFrame 0.4
-===============
+ConfigFrame 0.51
+================
 
 ConfigFrame is a Lazarus unit that can be used for to create quick configuration dialogs.
 

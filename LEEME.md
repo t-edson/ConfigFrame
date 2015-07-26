@@ -1,4 +1,4 @@
-ConfigFrame 0.4
+ConfigFrame 0.5b
 ===============
 
 ConfigFrame es una unidad de Lazarus, que puede ser usada para crear fácilmente formualrios de configuración.
@@ -52,14 +52,14 @@ Existen diversos métodos para asociar variables a controles:
 ```
 procedure Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
 						 defVal: integer; minVal, maxVal: integer);
-procedure Asoc_Int_TSpnEdi(ptrInt: pointer; spEdit: TSpinEdit; etiq: string;
+procedure Asoc_Int_TSpinEdit(ptrInt: pointer; spEdit: TSpinEdit; etiq: string;
 						 defVal, minVal, maxVal: integer);
 procedure Asoc_Str_TEdit(ptrStr: pointer; edit: TCustomEdit; etiq: string;
 						 defVal: string);
 procedure Asoc_Str_TCmbBox(ptrStr: pointer; cmbBox: TComboBox; etiq: string;
 						 defVal: string);
 procedure Asoc_StrList_TListBox(ptrStrList: pointer; lstBox: TlistBox; etiq: string);
-procedure Asoc_Bol_TChkB(ptrBol: pointer; chk: TCheckBox; etiq: string;
+procedure Asoc_Bol_TChkBox(ptrBol: pointer; chk: TCheckBox; etiq: string;
 						 defVal: boolean);
 procedure Asoc_Col_TColBut(ptrInt: pointer; colBut: TColorButton; etiq: string;
 						 defVal: TColor);
