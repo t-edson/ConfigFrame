@@ -1,30 +1,23 @@
 {
-ConfigFrame 0.51
+CfgFrame 0.6b
 ==================
-Por Tito Hinostroza 03/05/2015
-* Se cambia de nombre a tp_Int_TSpnEdit por tp_Int_TSpinEdit, para que sea más
-consistente con el nombre de la clase.
-* Se cambia de nombre a tp_Bol_TChkB por tp_Bol_TCheckBox, para que sea más
-consistente con el nombre de la clase.
-* Se cambia de nombre a Asoc_Int_TSpnEdi() y a Asoc_Bol_TChkB() para hacerlos más
-consistentes con el nombre del control que asocian.
-* Se simplifica el código creando el método AgregAsoc(r).
-* Se crea el método Asoc_Str_TEditButton(), para poder asociar controles de tipo
-TFileNameEdit y TDirectoryEdit a cadenas. Esto es necesario porque en la versión
-1.4 de Lazarus, estos controles ya no derivan de TEdit.
+Por Tito Hinostroza 23/07/2015
 
-Básicamente lo que se ha hecho en esta versión es adaptarla para trabajar con Lazarus
-1.4, y ordenar un poco el código.
+* Se cambia el modo de trabajo. Ahora se define a CfgFrame como un verdadero Frame
+y para crear Frames de configuración, ahora se debe crear Frames que hereden de
+CfgFrame.
 
 Descripción
 ===========
-Unidad para interceptar la clase TFrame y usar un TFrame personalizado que facilite la
-administración de propiedades. Incluye el manejo de entrada y salida a archivos INI.
+Unidad con Frame para servir de base en la creación de Frames de configuración que
+faciliten la administración de propiedades. Incluye el manejo de entrada y salida a
+archivos INI.
+
 Por Tito Hinostroza 10/07/2014
 }
 unit ConfigFrame;
-{$mode objfpc}{$H+}
 
+{$mode objfpc}{$H+}
 interface
 uses
   Classes, SysUtils, Forms, StdCtrls, ExtCtrls, Spin, IniFiles, Dialogs,
@@ -91,10 +84,7 @@ type
     defCol: TColor;    //valor TColor por defecto al leer de archivo INI
   end;
 
-  { TFrame }
-
-  TFrame = class(Forms.Tframe)   //TFrame personalizado
-//  TFrame = class(TcustomFrame)   //TFrame personalizado
+  TCfgFrame = class(TFrame)
   private
     listParElem : array of TParElem;
     procedure AgregAsoc(r: TParElem);
@@ -141,7 +131,7 @@ type
     procedure Asoc_StrList(ptrStrList: pointer; etiq: string);
   end;
 
-  TlistFrames = array of Tframe;
+  TlistFrames = array of TCfgFrame;
 
   //Utilidades para el formulario de configuración
   function IsFrameProperty(c: TComponent): boolean;
@@ -151,13 +141,13 @@ type
   procedure Hide_AllConfigFrames(form: TForm);
   function ReadFileToProp_AllFrames(form: TForm; arIni: string): string;
   function SavePropToFile_AllFrames(form: TForm; arIni: string): string;
-  function WindowToProp_AllFrames(form: TForm): TFrame;
-  function PropToWindow_AllFrames(form: TForm): TFrame;
+  function WindowToProp_AllFrames(form: TForm): TCfgFrame;
+  function PropToWindow_AllFrames(form: TForm): TCfgFrame;
   function IdFromTTreeNode(node: TTreeNode): string;
   function TTreeNodeFromId(Id: string; tree: TTreeView): TTreeNode;
 
-
 implementation
+{$R *.lfm}
 //Funciones de uso interno
 function WriteStr(s:string): string;
 //Protege a una cadena para que no pierda los espacios laterales si es que los tiene,
@@ -172,26 +162,28 @@ begin
 end;
 //Utilidades para el formulario de configuración
 function IsFrameProperty(c: TComponent): boolean;
-//Permite identificar si un componente es un Frame creado a partir de TFrame de
+//Permite identificar si un componente es un Frame creado a partir de
 //esta unidad.
+var
+  x: String;
 begin
-  if (c.ClassParent.ClassName='TFrame') and
-     (UpCase(c.ClassParent.UnitName) = UpCase('ConfigFrame')) then
+  x := c.ClassParent.ClassName;
+  if (c.ClassParent.ClassName='TCfgFrame') then
      Result := true
   else
      Result := false;
 end;
 function ListOfFrames(form: TForm): TlistFrames;
-//Devuelve la lista de frames del tipo TFrame declarado aquí
+//Devuelve la lista de frames del tipo TCfgFrame declarado aquí
 var
   i: Integer;
   n : integer;
-  f: TFrame;
+  f: TCfgFrame;
 begin
   SetLength(Result,0);
   for i:= 0 to form.ComponentCount-1 do begin
     if IsFrameProperty(form.Components[i]) then begin
-      f:=TFrame(form.Components[i]);  //obtiene referencia
+      f:=TCfgFrame(form.Components[i]);  //obtiene referencia
       n := high(Result)+1;    //número de elementos
       setlength(Result, n+1);  //hace espacio
       Result[n] := f;          //agrega
@@ -214,14 +206,14 @@ end;
 procedure Free_AllConfigFrames(form: TForm);
 //Libera los frames de configuración
 var
-  f: TFrame;
+  f: TCfgFrame;
 begin
   for f in ListOfFrames(form) do f.Free;
 end;
 procedure Hide_AllConfigFrames(form: TForm);
 //oculta todos los frames de configuración
 var
-  f: TFrame;
+  f: TCfgFrame;
 begin
   for f in ListOfFrames(form) do
     f.visible := false;
@@ -231,7 +223,7 @@ function ReadFileToProp_AllFrames(form: TForm; arIni: string): string;
 //Si encuentra error devuelve el mensaje.
 var
   appINI : TIniFile;
-  f: Tframe;
+  f: TCfgFrame;
 begin
   Result := '';
   if not FileExists(arIni) then exit;  //para que no intente leer
@@ -252,7 +244,7 @@ function SavePropToFile_AllFrames(form: TForm; arIni: string): string;
 //Si encuentra error devuelve el mensaje.
 var
    appINI : TIniFile;
-   f: Tframe;
+   f: TCfgFrame;
 begin
   Result := MSG_ERR_WRIT_INI + arIni;  //valor por defecto
   try
@@ -272,11 +264,11 @@ begin
     appIni.Free;                   //libera
   end;
 end;
-function WindowToProp_AllFrames(form: TForm): TFrame;
+function WindowToProp_AllFrames(form: TForm): TCfgFrame;
 //Llama al método WindowToProp de todos los frames de configuración.
 //Si encuentra error devuelve el Frame que produjo el error.
 var
-  f: TFrame;
+  f: TCfgFrame;
 begin
   Result := nil;
   //Fija propiedades de los controles
@@ -285,11 +277,11 @@ begin
     if f.MsjErr<>'' then exit(f);
   end;
 end;
-function PropToWindow_AllFrames(form: TForm): TFrame;
+function PropToWindow_AllFrames(form: TForm): TCfgFrame;
 //Llama al método PropToWindow de todos los frames de configuración.
 //Si encuentra error devuelve el Frame que produjo el error.
 var
-  f: TFrame;
+  f: TCfgFrame;
 begin
   Result := nil;
   //llama a PropToWindow() de todos los PropertyFrame.Frames
@@ -350,7 +342,7 @@ begin
   list.Destroy;
 end;
 
-procedure TFrame.AgregAsoc(r: TParElem);
+procedure TCfgFrame.AgregAsoc(r: TParElem);
 //Agrega una asociación a listParElem[]
 var n: integer;
 begin
@@ -358,18 +350,18 @@ begin
   setlength(listParElem, n+1);  //hace espacio
   listParElem[n] := r;          //agrega
 end;
-constructor TFrame.Create(TheOwner: TComponent);
+constructor TCfgFrame.Create(TheOwner: TComponent);
 begin
   inherited;
   setlength(listParElem, 0)
 end;
-destructor TFrame.Destroy;
+destructor TCfgFrame.Destroy;
 begin
 
   inherited Destroy;
 end;
 
-procedure TFrame.PropToWindow;
+procedure TCfgFrame.PropToWindow;
 //Muestra en los controles, las variables asociadas
 var
   i,j:integer;
@@ -460,7 +452,7 @@ begin
     end;
   end;
 end;
-procedure TFrame.WindowToProp;
+procedure TCfgFrame.WindowToProp;
 //Lee en las variables asociadas, los valores de loc controles
 var
   i,j: integer;
@@ -556,7 +548,7 @@ begin
   //Terminó con éxito. Actualiza los cambios
   if OnUpdateChanges<>nil then OnUpdateChanges;
 end;
-procedure TFrame.ReadFileToProp(var arcINI: TIniFile);
+procedure TCfgFrame.ReadFileToProp(var arcINI: TIniFile);
 //Lee de disco las variables registradas
 var
   i: integer;
@@ -628,7 +620,7 @@ begin
   //Terminó con éxito. Actualiza los cambios
   if OnUpdateChanges<>nil then OnUpdateChanges;
 end;
-procedure TFrame.SavePropToFile(var arcINI: TIniFile);
+procedure TCfgFrame.SavePropToFile(var arcINI: TIniFile);
 //Guarda en disco las variables registradas
 var
   i,j: integer;
@@ -723,7 +715,7 @@ begin
   end;
 end;
 //Métodos de asociación
-procedure TFrame.Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
+procedure TCfgFrame.Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
   defVal: integer; minVal, maxVal: integer);
 //Agrega un para variable entera - Control TEdit
 var
@@ -738,7 +730,7 @@ begin
   r.maxEnt := maxVal;    //protección de rango
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_Int_TSpinEdit(ptrInt: pointer; spEdit: TSpinEdit;
+procedure TCfgFrame.Asoc_Int_TSpinEdit(ptrInt: pointer; spEdit: TSpinEdit;
   etiq: string; defVal, minVal, maxVal: integer);
 //Agrega un para variable entera - Control TSpinEdit
 var
@@ -753,7 +745,7 @@ begin
   r.maxEnt := maxVal;    //protección de rango
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_Str_TEdit(ptrStr: pointer; edit: TCustomEdit;
+procedure TCfgFrame.Asoc_Str_TEdit(ptrStr: pointer; edit: TCustomEdit;
   etiq: string; defVal: string);
 //Agrega un par variable string - Control TEdit
 var
@@ -766,7 +758,7 @@ begin
   r.defStr := defVal;
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_Str_TEditButton(ptrStr: pointer; edit: TCustomEditButton;
+procedure TCfgFrame.Asoc_Str_TEditButton(ptrStr: pointer; edit: TCustomEditButton;
   etiq: string; defVal: string);
 //Agrega un par variable string - Control TEditButton
 var
@@ -779,7 +771,7 @@ begin
   r.defStr := defVal;
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_Str_TCmbBox(ptrStr: pointer; cmbBox: TComboBox; etiq: string;
+procedure TCfgFrame.Asoc_Str_TCmbBox(ptrStr: pointer; cmbBox: TComboBox; etiq: string;
   defVal: string);
 //Agrega un par variable string - Control TEdit
 var
@@ -792,7 +784,7 @@ begin
   r.defStr := defVal;
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_StrList_TListBox(ptrStrList: pointer; lstBox: TlistBox;
+procedure TCfgFrame.Asoc_StrList_TListBox(ptrStrList: pointer; lstBox: TlistBox;
   etiq: string);
 var
   r: TParElem;
@@ -804,7 +796,7 @@ begin
 //  r.defCol := defVal;
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_Bol_TChkBox(ptrBol: pointer; chk: TCheckBox; etiq: string;
+procedure TCfgFrame.Asoc_Bol_TChkBox(ptrBol: pointer; chk: TCheckBox; etiq: string;
   defVal: boolean);
 //Agrega un para variable booleana - Control TCheckBox
 var
@@ -817,7 +809,7 @@ begin
   r.defBol := defVal;
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_Col_TColBut(ptrInt: pointer; colBut: TColorButton; etiq: string;
+procedure TCfgFrame.Asoc_Col_TColBut(ptrInt: pointer; colBut: TColorButton; etiq: string;
   defVal: TColor);
 //Agrega un par variable TColor - Control TColorButton
 var
@@ -830,7 +822,7 @@ begin
   r.defCol := defVal;
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_Enum_TRadBut(ptrEnum: pointer; EnumSize: integer;
+procedure TCfgFrame.Asoc_Enum_TRadBut(ptrEnum: pointer; EnumSize: integer;
   radButs: array of TRadioButton; etiq: string; defVal: integer);
 //Agrega un par variable Enumerated - Controles TRadioButton
 //Solo se permiten enumerados de hasta 32 bits de tamaño
@@ -851,7 +843,7 @@ begin
 
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_Enum_TRadGroup(ptrEnum: pointer; EnumSize: integer;
+procedure TCfgFrame.Asoc_Enum_TRadGroup(ptrEnum: pointer; EnumSize: integer;
   radGroup: TRadioGroup; etiq: string; defVal: integer);
 //Agrega un par variable Enumerated - Control TRadioGroup
 //Solo se permiten enumerados de hasta 32 bits de tamaño
@@ -867,7 +859,7 @@ begin
 
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_Bol_TRadBut(ptrBol: pointer;
+procedure TCfgFrame.Asoc_Bol_TRadBut(ptrBol: pointer;
   radButs: array of TRadioButton; etiq: string; defVal: boolean);
 //Agrega un par variable Enumerated - Controles TRadioButton
 //Solo se permiten enumerados de hasta 32 bits de tamaño
@@ -887,7 +879,7 @@ begin
   AgregAsoc(r);          //agrega
 end;
 
-procedure TFrame.Asoc_Int(ptrInt: pointer; etiq: string; defVal: integer);
+procedure TCfgFrame.Asoc_Int(ptrInt: pointer; etiq: string; defVal: integer);
 //Agrega una variable Entera para guardarla en el archivo INI.
 var
   r: TParElem;
@@ -899,7 +891,7 @@ begin
   r.defEnt := defVal;
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_Bol(ptrBol: pointer; etiq: string; defVal: boolean);
+procedure TCfgFrame.Asoc_Bol(ptrBol: pointer; etiq: string; defVal: boolean);
 //Agrega una variable String para guardarla en el archivo INI.
 var
   r: TParElem;
@@ -911,7 +903,7 @@ begin
   r.defBol := defVal;
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_Str(ptrStr: pointer; etiq: string; defVal: string);
+procedure TCfgFrame.Asoc_Str(ptrStr: pointer; etiq: string; defVal: string);
 //Agrega una variable String para guardarla en el archivo INI.
 var
   r: TParElem;
@@ -923,7 +915,7 @@ begin
   r.defStr := defVal;
   AgregAsoc(r);          //agrega
 end;
-procedure TFrame.Asoc_StrList(ptrStrList: pointer; etiq: string);
+procedure TCfgFrame.Asoc_StrList(ptrStrList: pointer; etiq: string);
 //Agrega una variable TStringList para guardarla en el archivo INI. El StrinList, debe estar
 //ya creado, sino dará error.
 var
@@ -937,14 +929,14 @@ begin
   AgregAsoc(r);          //agrega
 end;
 
-procedure TFrame.ShowPos(x, y: integer);
+procedure TCfgFrame.ShowPos(x, y: integer);
 //Muestra el frame en la posición indicada
 begin
   Self.left:= x;
   Self.Top := y;
   Self.Visible:=true;
 end;
-function TFrame.EditValidateInt(edit: TEdit; min: integer; max: integer): boolean;
+function TCfgFrame.EditValidateInt(edit: TEdit; min: integer; max: integer): boolean;
 //Velida el contenido de un TEdit, para ver si se puede convertir a un valor entero.
 //Si no se puede convertir, devuelve FALSE, devuelve el mensaje de error en "MsjErr", y
 //pone el TEdit con enfoque.

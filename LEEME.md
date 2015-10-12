@@ -1,11 +1,33 @@
-ConfigFrame 0.5b
-===============
+ConfigFrame
+===========
 
-ConfigFrame es una unidad de Lazarus, que puede ser usada para crear fácilmente formualrios de configuración.
+ConfigFrame es una unidad de Lazarus, que puede ser usada para crear fácilmente formularios de configuración.
 
-Es una unidad (librería) desarrollada en Lazarus que contiene la definición de una clase para reemplazar a TFrame.
+Es una unidad (librería) desarrollada en Lazarus que contiene un Frame que servirá como base para la creación de Frames de Configuración.
 
-Esta nueva clase TFrame incluye métodos predefinidos que facilitan la manipulación de variables (propiedades) de la aplicación, de modo que editarlos en un diálogo y guardar los cambios a disco, se hacen de forma casi transparente.
+Los frames de configuración se usan para crear una ventana de configuración, de acuerdo a la siguiente estructura:
+
+```
+                             +-------------------+
+                             |                   | 
+                         +---|   Configuration   | 
+                         |   |       Frame       | 
+                         |   +-------------------+
++-------------------+    |
+|                   |----+   +-------------------+
+|    Configuration  |        |                   | 
+|        Form       |--------|   Configuration   |  
+|                   |        |       Frame       |
+|                   |----+   +-------------------+
++-------------------+    |
+                         |   +-------------------+
+                         |   |                   | 
+                         +---|   Configuration   | 
+                             |       Frame       | 
+                             +-------------------+
+```
+
+Este nuevo Frame incluye métodos predefinidos que facilitan la manipulación de variables (propiedades) de la aplicación, de modo que editarlos en un diálogo y guardar los cambios a disco, se hacen de forma casi transparente.
 
 Con esta librería se simplifica considerablemente, la creación de ventanas de configuración.
 
@@ -13,7 +35,6 @@ Se asume que se trabajará con un archivo INI, en donde se guardarán las variab
 
 Con la unidad "ConfigFrame", se puede crear Frames de configuración tan simples
 como este:
-
 
 ```
 unit frameTexto;
@@ -24,7 +45,7 @@ uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ConfigFrame; 
 
 type
-  TfraTexto = class(TFrame)
+  TfraTexto = class(TCfgFrame)
     Edit1: TEdit;
   public
     //variables de propiedades
@@ -47,6 +68,106 @@ end.
 
 Y aún con este código tan simple, el frame permitirá editar el valor de la variable
 "texto" con el control "Edit1", y guardar los cambios a disco o leerlos desde allí.
+
+## Modo de uso
+
+Para usar ConfigFrame, se recomienda seguir el modelo de diseño sugerido. Que consiste en crear primero un formulario de configuración y luego uno o más Frames de configuración, que serán incluidos en el formulario de configuración.
+
+Para crear un frame de configuración, se puede seguir este procedimiento:
+
+1. Copiar los archivos de la librería a una carpeta determinada.
+2. Abrir el Inspector de Proyecto e incluir el archivo "ConfigFrame.pas", desde la carpeta donde se guardó la librería.
+3. Abrir el archivo "ConfigFrame.pas", en el editor y mostrar el Frame (F12).
+4. En el menú principal, elegir "Archivo>Nuevo", luego en el cuadro mostrado, elegir "Componente heredado>Componente de proyecto heredado".
+5. Elegir "ConfigFrame" y ya se tendrá un frame de configuración, listo para incluir los controles que se usarán para mostrar las propiedades.
+
+Lo primero que se recomienda hacer con un nuevo frame de configuración es, cambiar el nombre de la unidad (que debe estar como UnitX) a algo como frameCfgGeneral. Luego se debe cambiar el nombre del frame mismo, usando el inspector de objetos. El nombre del frame (no de la unidad que lo contiene), debe ser algo así como fraCfgGeneral.
+
+Una vez creado el frame y con los nombres configurados, se tendrá un código como este:
+
+```
+unit frameCfgGeneral;
+{$mode objfpc}{$H+}
+interface
+uses
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ConfigFrame;
+
+type
+  TfraCfgGeneral = class(TConfigFrame)
+  private
+    { private declarations }
+  public
+    { public declarations }
+  end;
+
+var
+  fraCfgGeneral: TfraCfgGeneral;
+
+implementation
+{$R *.lfm}
+
+end.
+```
+
+Sobre este código, se debe crear un método de inicio, que permita asociar los controles (o variables) al archivo INI. El código funcional,pero sin asociaciones, sería este:
+
+```
+unit FrameCfgGeneral;
+{$mode objfpc}{$H+}
+interface
+uses
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  ConfigFrame;
+
+type
+
+  { TfraCfgGeneral }
+  TfraCfgGeneral = class(TCfgFrame)
+    Edit1: TEdit;
+  public
+    { public declarations }
+    procedure Iniciar(secINI0: string); //Inicia el frame
+  end;
+
+implementation
+{$R *.lfm}
+
+{ TfraCfgGeneral }
+procedure TfraCfgGeneral.Iniciar(secINI0: string);
+begin
+  secINI := secINI0;  //sección INI
+end;
+
+end.
+```
+
+A partir de esta código mínimo, se deben ir agregando las variables y controles, que se desean preservar en el archivo INI, como se mostró en el primer código de ejemplo.
+
+Para mayor información, revisar los códigos de ejemplo, de la página web.
+
+Tal vez el método más sencillo de crear un formulario de configuración con sus respectivos frames, es usar uno de los proyectos ejemplos, como Sample2, y copiar los archivos FormConfig.lfm, FormConfig.pas y todos los archivos de tipo Frame*.* a la carpeta de nuestro proyecto. Luego, simplemente incluir el código para iniciar y guardar el archivo de configuración en nuestro programa principal:
+
+```
+procedure TForm1.FormShow(Sender: TObject);
+begin
+  Config.Iniciar(self);   
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  Config.escribirArchivoIni;  //guarda la configuración actual
+end;
+```
+
+Y en alguna parte del programa, para mostrar el formulario de configuración, usar:
+
+```
+  Config.Mostrar;
+```
+
+Es importante asegurarse que el formulario FormConfig, se carge al iniciar el programa (de otra forma se geenerará un error en tiempo de ejecución). Esto se puede hacer por código o usando el menú: "Proyecto>Opciones de Proyecto>Formulario".
+
+## Métodos para asociar controles
 
 Existen diversos métodos para asociar variables a controles:
 ```
@@ -96,9 +217,9 @@ ConfigFrame, puede ser visto también, como un sencillo marco de trabajo (framew
 
 * Los Frames se crean normalmente con el editor visual de Lazarus, colocando los controles necesarios para manejar a las propiedades que se usan en ese Frame.
  
-* La ventana de configuración, así como los Frames de configuración se deben crear incluyendo la unidad "ConfigFrame", para que puedan usar la nueva definición de TFrame. Esta unidad se debe incluir al final de la sección USES para lograr la interceptación de la clase TFrame.
+* Los Frames de configuración se deben crear como componente heredado de "CfgFrame", para que puedan funcionar como Frames configuración.
 
-Para los nombres de objetos, ee recomienda las siguientes normas:
+Para los nombres de objetos, se recomienda las siguientes normas:
 
 * Las unidades donde se definen los frame de configuración deben llamarse frameCfg{XXX}. Donde {XXX} es la parte del nombre que define la función. Por ejemplo frameCfgColores, frameCfgMainEdit
 

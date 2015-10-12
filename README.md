@@ -1,11 +1,33 @@
-ConfigFrame 0.51
+ConfigFrame 0.6b
 ================
 
-ConfigFrame is a Lazarus unit that can be used for to create quick configuration dialogs.
+ConfigFrame is a Lazarus unit that can be used to create quick configuration dialogs.
 
-This unit for Lazarus, contain a new TFrame class for replace to the common Lazarus TFrame definition.
+This unit for Lazarus, contain a Frame class for derives Configuration Frames.
 
-This new TFrame includes predefined methods that facilitate the manipulation of variables (properties) of the application, so edit them in a config dialog, and save the changes to disk, are nearly transparent.
+The Configruation Frames are used to create configuration dialogs, according to the following structure:
+
+```
+                             +-------------------+
+                             |                   | 
+                         +---|   Configuration   | 
+                         |   |       Frame       | 
+                         |   +-------------------+
++-------------------+    |
+|                   |----+   +-------------------+
+|    Configuration  |        |                   | 
+|      Dialog       |--------|   Configuration   |  
+|                   |        |       Frame       |
+|                   |----+   +-------------------+
++-------------------+    |
+                         |   +-------------------+
+                         |   |                   | 
+                         +---|   Configuration   | 
+                             |       Frame       | 
+                             +-------------------+
+```
+
+This new Frame includes predefined methods that facilitate the manipulation of variables (properties) of the application, so edit them in a config dialog, and save the changes to disk, are nearly transparent.
 
 This library simplifies the creation of configuration dialogs.
 
@@ -13,6 +35,7 @@ It is assumed that we work with an INI file, where the work variables are saved.
 
 With the "ConfigFrame" unit, you can create as simple configuration Frames
 like this:
+
 ```
 unit frameGeneral;
 {$mode objfpc}{$H+}
@@ -23,7 +46,7 @@ uses
 
 type
 
-  TfraConfig = class(TFrame)
+  TfraConfig = class(TCfgFrame)
     Edit1: TEdit;
     Edit2: TEdit;
   public
@@ -50,6 +73,14 @@ end.
 And, even with this simple code, the frame allow you to edit the value of two variables
 (MyText and MyNumber) on a frame, and save your changes to disk or read from there.
 
+## How to use?
+
+To use ConfigFrame, it's advisable to follow the suggested design model. It consists on first create a Configuration Form and one or more Configuration Frames, that be included in the Configuration Form.
+
+
+
+## Methods for association
+
 There are several methods for associate variables to controls:
 ```
     procedure Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
@@ -74,6 +105,7 @@ There are several methods for associate variables to controls:
     procedure Asoc_Bol_TRadBut(ptrBol: pointer;
                     radButs: array of TRadioButton; etiq: string; defVal: boolean);
 ```
+
 Also, if we just want to save variables into the INI files, without showing, there are some other methods for that:
 
 ```
@@ -90,15 +122,15 @@ ConfigFrame, can be see too, like a small Framework, because it defines some rul
 * It must be one INI file and one Config Dialog. Although it's possible to create several config files, it is recommended to maintain the relation: 
 INI File <-> Configuración Dialog.
 
-* One config dialog can contain one or more frames ('Configuration frame'). When we have more than one, we can use a ListBox control or some other control for to select the  working frame.
+* One config dialog can contain one or more frames ('Configuration frame'). When we have more than one, we can use a ListBox control or some other control to select the  working frame.
 
 * The Configuration frames must be created and destroyed dynamically on the Configuration frame.
 
-* Each Configuration frame must contain one set of properties related. For example we can have a frame for to save the general properties and other for to save the editor properties, and ... 
+* Each Configuration frame must contain one set of properties related. For example we can have a frame to save the general properties and other to save the editor properties, and ... 
 
-* The Configuration frames are commonly created using the Lazarus visual editor, using the controls required for to manage the variables of the frame.
+* The Configuration frames are commonly created using the Lazarus visual editor, using the controls required to manage the variables of the frame.
  
-* The Config Dialog, and the Configuration frames must include the unit "ConfigFrame", in order to use the new definition for TFrame. This unit must be included at  the end of the USES section for to intercept the definition of the class TFrame.
+* The Configuration frames must be created  created  inheriting from the component "CfgFrame" so they can behave as Configuration Frames properly.
 
 It's also recommended use standard names for the objects. We can use these rules:
 
