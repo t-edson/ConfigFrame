@@ -1,0 +1,83 @@
+inherited fraConfig: TfraConfig
+  object ColorButton1: TColorButton[0]
+    Left = 80
+    Height = 25
+    Top = 80
+    Width = 75
+    BorderWidth = 2
+    ButtonColorSize = 16
+    ButtonColor = clBlack
+  end
+  object Label1: TLabel[1]
+    Left = 16
+    Height = 15
+    Top = 88
+    Width = 32
+    Caption = 'Color:'
+    ParentColor = False
+  end
+  object Edit1: TEdit[2]
+    Left = 80
+    Height = 23
+    Top = 16
+    Width = 80
+    TabOrder = 0
+    Text = 'Edit1'
+  end
+  object Label2: TLabel[3]
+    Left = 16
+    Height = 15
+    Top = 16
+    Width = 25
+    Caption = 'Text;'
+    ParentColor = False
+  end
+  object Label3: TLabel[4]
+    Left = 16
+    Height = 15
+    Top = 48
+    Width = 47
+    Caption = 'Number:'
+    ParentColor = False
+  end
+  object Edit2: TEdit[5]
+    Left = 80
+    Height = 23
+    Top = 48
+    Width = 80
+    TabOrder = 1
+    Text = 'Edit2'
+  end
+  object Label4: TLabel[6]
+    Left = 16
+    Height = 15
+    Top = 128
+    Width = 45
+    Caption = 'Options:'
+    ParentColor = False
+  end
+  object RadButton1: TRadioButton[7]
+    Left = 88
+    Height = 19
+    Top = 128
+    Width = 82
+    Caption = 'RadButton1'
+    TabOrder = 2
+  end
+  object RadButton2: TRadioButton[8]
+    Left = 88
+    Height = 19
+    Top = 160
+    Width = 82
+    Caption = 'RadButton2'
+    TabOrder = 3
+  end
+  object RadButton3: TRadioButton[9]
+    Left = 88
+    Height = 19
+    Top = 192
+    Width = 82
+    Caption = 'RadButton3'
+    TabOrder = 4
+  end
+end
