@@ -42,18 +42,18 @@ end;
 procedure TForm1.FormShow(Sender: TObject);
 begin
   //asigna las referencias que podría necesiar el form. de configuración
-  Config.Start(self);   //necesario para poder trabajar
+  Config.Iniciar(self);   //necesario para poder trabajar
   //ConfiguraEntorno;    //necesario para cargar el estado leido de disco
 end;
 
 procedure TForm1.MenuItem1Click(Sender: TObject);
 begin
-  Config.Show;
+  Config.Mostrar;
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  Config.WriteIniFile;  //guarda la configuración actual
+  Config.escribirArchivoIni;  //guarda la configuración actual
 end;
 
 end.

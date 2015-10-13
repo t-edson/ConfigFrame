@@ -53,9 +53,9 @@ object Config: TConfig
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
     Items.Strings = (
-      'Text'
-      'Colors'
-      'Numbers'
+      'Textos'
+      'Colores'
+      'Números'
     )
     ItemHeight = 20
     OnClick = lstCategClick

@@ -1,4 +1,4 @@
-{Model of Configuration Form with 2 Configuration Frames}
+{Modelo de formulario de configuración que usa dos Frame de configuración}
 unit FormConfig;
 
 {$mode objfpc}{$H+}
@@ -8,9 +8,9 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Buttons,
   StdCtrls,
-   //config frames here
+   //deben incluirse todos los frames de propiedades a usar
   frameCfgTexto, frameCfgColores, frameCfgNumeros,
-  ConfigFrame;  //need to work
+  ConfigFrame;  //necesario para manejar los Frames de configuración
 
 type
 
@@ -30,19 +30,20 @@ type
   private
     { private declarations }
   public
-    msjError: string;    //for error message
+    msjError: string;    //para los mensajes de error
     fraError: TCfgFrame;
-    arIni   : String;      //Ini file
-    //list of configuration frames
+    arIni   : String;      //Archivo de configuración
+    //************  Modificar Aquí ***************//
+    //frames de configuración
     fcTexto: TfraTexto;
     fcColores: TfraColores;
     fcNumeros: TfraNumeros;
-    procedure WriteIniFile;
-    procedure ReadIniFile;
-    procedure WindowToProp;
-    procedure PropToWindow;
-    procedure Start(f: TForm);
-    procedure Show;
+    procedure escribirArchivoIni;
+    procedure leerArchivoIni;
+    procedure LeerDeVentana;
+    procedure MostEnVentana;
+    procedure Iniciar(f: TForm);
+    procedure Mostrar;
   end;
 
 var
@@ -56,7 +57,8 @@ implementation
 
 procedure TConfig.FormCreate(Sender: TObject);
 begin
-  //Create dynamically the frames
+  //************  Modificar Aquí ***************//
+  //Crea dinámicamente los frames de configuración
   fcTexto:= TfraTexto.Create(Self);
   fcTexto.parent := self;
   fcColores:= TfraColores.Create(Self);
@@ -70,30 +72,31 @@ end;
 procedure TConfig.BitAceptarClick(Sender: TObject);
 begin
   bitAplicarClick(Self);
-  if fraError<>nil then exit;  //error?
-  self.Close;  //exit if no error
+  if fraError<>nil then exit;  //hubo error
+  self.Close;  //sale si no hay error
 end;
 
 procedure TConfig.BitAplicarClick(Sender: TObject);
 begin
-  WindowToProp;       //Escribe propiedades de los frames
+  LeerDeVentana;       //Escribe propiedades de los frames
   if fraError<>nil then begin
     showmessage(fraError.MsjErr);
     exit;
   end;
-  WriteIniFile;   //save properties to disk
+  escribirArchivoIni;   //guarda propiedades en disco
 end;
 
-procedure TConfig.Start(f: TForm);
+procedure TConfig.Iniciar(f: TForm);
 //Inicia el formulario de configuración. Debe llamarse antes de usar el formulario y
 //después de haber cargado todos los frames.
 begin
-  //Start our frames
+  //************  Modificar Aquí ***************//
+  //inicia los Frames creados
   fcTexto.Iniciar('texto');
   fcColores.Iniciar('colores',f);
   fcNumeros.Iniciar('numeros');
 
-  ReadIniFile;  //read properties from the Ini file.
+  LeerArchivoIni;  //lee parámetros del archivo de configuración.
 end;
 
 procedure TConfig.FormDestroy(Sender: TObject);
@@ -103,41 +106,46 @@ end;
 
 procedure TConfig.FormShow(Sender: TObject);
 begin
-  PropToWindow;   //Load properties to the frame
+  MostEnVentana;   //carga las propiedades en el frame
 end;
 
 procedure TConfig.lstCategClick(Sender: TObject);
 begin
-  Hide_AllConfigFrames(self);   //hide all
+  Hide_AllConfigFrames(self);   //oculta todos
+  //************  Modificar Aquí ***************//
   if lstCateg.ItemIndex = 0 then fcTexto.ShowPos(120,0) ;
   if lstCateg.ItemIndex = 1 then fcColores.ShowPos(120,0);
   if lstCateg.ItemIndex = 2 then fcNumeros.ShowPos(120,0);
 end;
 
-procedure TConfig.Show;
-//Show the form to config
+procedure TConfig.Mostrar;
+//Muestra el formulario para configurarlo
 begin
-  lstCateg.ItemIndex:=0;   //define first frame
+  lstCateg.ItemIndex:=0;   //define frame inicial
   lstCategClick(self);
   Showmodal;
 end;
 
-procedure TConfig.WindowToProp;
+procedure TConfig.LeerDeVentana;
+//Lee las propiedades de la ventana de configuración.
 begin
   fraError := WindowToProp_AllFrames(self);
 end;
 
-procedure TConfig.PropToWindow;
+procedure TConfig.MostEnVentana;
+//Muestra las propiedades en la ventana de configuración.
 begin
   fraError := PropToWindow_AllFrames(self);
 end;
 
-procedure TConfig.ReadIniFile;
+procedure TConfig.leerArchivoIni;
+//Lee el archivo de configuración
 begin
   msjError := ReadFileToProp_AllFrames(self, arINI);
 end;
 
-procedure TConfig.WriteIniFile;
+procedure TConfig.escribirArchivoIni;
+//Escribe el archivo de configuración
 begin
   msjError := SavePropToFile_AllFrames(self, arINI);
 end;

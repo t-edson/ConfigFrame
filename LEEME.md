@@ -145,7 +145,7 @@ A partir de esta código mínimo, se deben ir agregando las variables y controle
 
 Para mayor información, revisar los códigos de ejemplo, de la página web.
 
-Tal vez el método más sencillo de crear un formulario de configuración con sus respectivos frames, es usar uno de los proyectos ejemplos, como Sample2, y copiar los archivos FormConfig.lfm, FormConfig.pas y todos los archivos de tipo Frame*.* a la carpeta de nuestro proyecto. Luego, simplemente incluir el código para iniciar y guardar el archivo de configuración en nuestro programa principal:
+Tal vez el método más sencillo de crear un formulario de configuración con sus respectivos frames, es usar uno de los proyectos ejemplos, como Sample2, y copiar los archivos FormConfig.lfm, FormConfig.pas y todos los archivos de tipo FrameCfg*.* a la carpeta de nuestro proyecto. Luego, simplemente incluir el código para iniciar y guardar el archivo de configuración en nuestro programa principal:
 
 ```
 procedure TForm1.FormShow(Sender: TObject);
@@ -165,7 +165,9 @@ Y en alguna parte del programa, para mostrar el formulario de configuración, us
   Config.Mostrar;
 ```
 
-Es importante asegurarse que el formulario FormConfig, se carge al iniciar el programa (de otra forma se geenerará un error en tiempo de ejecución). Esto se puede hacer por código o usando el menú: "Proyecto>Opciones de Proyecto>Formulario".
+A partir de allí se pueden modificar los frames de configuración, para adecuarlos a nuestras necesidades.
+
+Es importante asegurarse que el formulario FormConfig, se carge al iniciar el programa (de otra forma se generará un error en tiempo de ejecución). Esto se puede hacer por código o usando el menú: "Proyecto>Opciones de Proyecto>Formulario".
 
 ## Métodos para asociar controles
 
