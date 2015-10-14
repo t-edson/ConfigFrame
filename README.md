@@ -45,7 +45,6 @@ uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ConfigFrame;
 
 type
-
   TfraConfig = class(TCfgFrame)
     Edit1: TEdit;
     Edit2: TEdit;
