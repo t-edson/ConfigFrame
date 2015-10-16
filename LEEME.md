@@ -171,6 +171,18 @@ A partir de esta código mínimo, se deben ir agregando las variables y controle
 
 Para mayor información, revisar los códigos de ejemplo, de la página web.
 
+## Flujo de información
+
+ConfigFrame se basa en que la información de las propiedades (variables) se mueven de acuerdo al siguiente flujo:
+
+Disco  <----> Propiedades <------> Formulario
+
+Visualmente, lo que se ve para editar a las propiedades es el formulario (realmente se editan en el frame de configuración), y cuando se aceptan los cambios, se produce la actualizción de las propiedades.
+
+El flujo de las variables a disco se produce cuando se desea hacer los cambios permanentes. Esto se debe hacer llamando a la instrucción SavePropToFile_AllFrames().
+
+De igual forma para leer los datos de disco a las propiedades, se debe usar la instrucción ReadFileToProp_AllFrames().
+
 ## Métodos para asociar controles
 
 Existen diversos métodos para asociar variables a controles:

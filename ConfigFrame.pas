@@ -6,7 +6,6 @@ Por Tito Hinostroza 23/07/2015
 * Se cambia el modo de trabajo. Ahora se define a CfgFrame como un verdadero Frame
 y para crear Frames de configuración, ahora se debe crear Frames que hereden de
 CfgFrame.
-* Se agregan los eventos OnPropToWindow y OnPropToFile.
 
 Descripción
 ===========
@@ -95,8 +94,6 @@ type
     secINI: string;   //sección donde se guardaran los datos en un archivo INI
     MsjErr: string;   //mensaje de error
     OnUpdateChanges: procedure of object;
-    OnPropToWindow: procedure of object;
-    OnPropToFile: procedure of object;
     procedure ShowPos(x, y: integer); virtual;
     function EditValidateInt(edit: TEdit; min: integer=MaxInt; max: integer=-MaxInt): boolean;
     constructor Create(TheOwner: TComponent); override;
@@ -376,7 +373,6 @@ var
   list: TStringList;
 begin
   msjErr := '';
-  if OnPropToWindow<>nil then OnPropToWindow;
   for i:=0 to high(listParElem) do begin
     r := listParElem[i];
     case r.tipPar of
@@ -635,7 +631,6 @@ var
   c: TColor;
   strlst: TStringList;
 begin
-  if OnPropToFile<>nil then OnPropToFile;
   for i:=0 to high(listParElem) do begin
     r := listParElem[i];
     case r.tipPar of
