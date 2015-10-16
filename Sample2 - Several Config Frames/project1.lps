@@ -8,7 +8,7 @@
       <Unit0>
         <Filename Value="project1.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="48"/>
+        <UsageCount Value="54"/>
       </Unit0>
       <Unit1>
         <Filename Value="unit1.pas"/>
@@ -17,9 +17,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <TopLine Value="29"/>
-        <CursorPos X="11" Y="35"/>
-        <UsageCount Value="48"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="27"/>
+        <CursorPos X="15" Y="49"/>
+        <UsageCount Value="54"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -29,12 +30,12 @@
         <ComponentName Value="Config"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="30"/>
-        <CursorPos X="28" Y="43"/>
-        <UsageCount Value="48"/>
+        <TopLine Value="65"/>
+        <CursorPos X="24" Y="42"/>
+        <UsageCount Value="54"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="frameCfgTexto.pas"/>
@@ -44,7 +45,7 @@
         <ResourceBaseClass Value="Frame"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="22" Y="8"/>
-        <UsageCount Value="48"/>
+        <UsageCount Value="54"/>
       </Unit3>
       <Unit4>
         <Filename Value="frameCfgNumeros.pas"/>
@@ -54,7 +55,7 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="21"/>
-        <UsageCount Value="38"/>
+        <UsageCount Value="44"/>
       </Unit4>
       <Unit5>
         <Filename Value="framecolores.pas"/>
@@ -62,7 +63,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FrameColores"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="19"/>
       </Unit5>
       <Unit6>
         <Filename Value="frameCfgColores.pas"/>
@@ -71,7 +72,7 @@
         <ResourceBaseClass Value="Frame"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="10" Y="17"/>
-        <UsageCount Value="48"/>
+        <UsageCount Value="47"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\ConfigFrame.pas"/>
@@ -81,24 +82,24 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="87"/>
         <CursorPos X="15" Y="102"/>
-        <UsageCount Value="19"/>
+        <UsageCount Value="18"/>
       </Unit7>
       <Unit8>
         <Filename Value="C:\lazarus\fpc\2.6.2\source\rtl\objpas\objpas.pp"/>
         <TopLine Value="70"/>
         <CursorPos X="33" Y="86"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit8>
       <Unit9>
         <Filename Value="C:\lazarus\lcl\include\control.inc"/>
         <TopLine Value="3620"/>
         <CursorPos Y="3636"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit9>
       <Unit10>
         <Filename Value="framenumeros.lfm"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit10>
     </Units>

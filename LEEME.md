@@ -73,6 +73,32 @@ Y aún con este código tan simple, el frame permitirá editar el valor de la va
 
 Para usar ConfigFrame, se recomienda seguir el modelo de diseño sugerido. Que consiste en crear primero un formulario de configuración y luego uno o más Frames de configuración, que serán incluidos en el formulario de configuración.
 
+Tal vez el método más sencillo de crear un formulario de configuración con sus respectivos frames, es usar uno de los proyectos ejemplos, como Sample3, y copiar los archivos FormConfig.lfm, FormConfig.pas y todos los archivos de tipo FrameCfg*.* a la carpeta de nuestro proyecto. Luego, simplemente incluir el código para iniciar y guardar el archivo de configuración en nuestro programa principal:
+
+```
+procedure TForm1.FormShow(Sender: TObject);
+begin
+  Config.Iniciar(self);   
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  Config.escribirArchivoIni;  //guarda la configuración actual
+end;
+```
+
+Y en alguna parte del programa, para mostrar el formulario de configuración, usar:
+
+```
+  Config.Mostrar;
+```
+
+A partir de allí se pueden modificar los frames de configuración, para adecuarlos a nuestras necesidades.
+
+Es importante asegurarse que el formulario FormConfig, se carge al iniciar el programa (de otra forma se generará un error en tiempo de ejecución). Esto se puede hacer por código o usando el menú: "Proyecto>Opciones de Proyecto>Formulario".
+
+## Creando un nuevo Frame de Configuración
+
 Para crear un frame de configuración, se puede seguir este procedimiento:
 
 1. Copiar los archivos de la librería a una carpeta determinada.
@@ -144,30 +170,6 @@ end.
 A partir de esta código mínimo, se deben ir agregando las variables y controles, que se desean preservar en el archivo INI, como se mostró en el primer código de ejemplo.
 
 Para mayor información, revisar los códigos de ejemplo, de la página web.
-
-Tal vez el método más sencillo de crear un formulario de configuración con sus respectivos frames, es usar uno de los proyectos ejemplos, como Sample3, y copiar los archivos FormConfig.lfm, FormConfig.pas y todos los archivos de tipo FrameCfg*.* a la carpeta de nuestro proyecto. Luego, simplemente incluir el código para iniciar y guardar el archivo de configuración en nuestro programa principal:
-
-```
-procedure TForm1.FormShow(Sender: TObject);
-begin
-  Config.Iniciar(self);   
-end;
-
-procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-begin
-  Config.escribirArchivoIni;  //guarda la configuración actual
-end;
-```
-
-Y en alguna parte del programa, para mostrar el formulario de configuración, usar:
-
-```
-  Config.Mostrar;
-```
-
-A partir de allí se pueden modificar los frames de configuración, para adecuarlos a nuestras necesidades.
-
-Es importante asegurarse que el formulario FormConfig, se carge al iniciar el programa (de otra forma se generará un error en tiempo de ejecución). Esto se puede hacer por código o usando el menú: "Proyecto>Opciones de Proyecto>Formulario".
 
 ## Métodos para asociar controles
 

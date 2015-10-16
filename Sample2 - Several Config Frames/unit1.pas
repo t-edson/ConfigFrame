@@ -41,9 +41,7 @@ end;
 
 procedure TForm1.FormShow(Sender: TObject);
 begin
-  //asigna las referencias que podría necesiar el form. de configuración
   Config.Start(self);   //necesario para poder trabajar
-  //ConfiguraEntorno;    //necesario para cargar el estado leido de disco
 end;
 
 procedure TForm1.MenuItem1Click(Sender: TObject);
