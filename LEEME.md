@@ -171,40 +171,6 @@ A partir de esta código mínimo, se deben ir agregando las variables y controle
 
 Para mayor información, revisar los códigos de ejemplo, de la página web.
 
-## Flujo de información
-
-ConfigFrame se basa en que la información de las propiedades (variables) se mueven de acuerdo al siguiente flujo:
-
-```
- +-----------+                  +-------------+                 +------------+
- |           | ReadFileToProp() |             |  PropToWindow() |            |
- |           | ---------------> |             | --------------> |            |
- |   Disco   |                  | Propiedades |                 | Formulario |
- |           | SavePropToFile() |             |  WindowToProp() |            |
- |           | <--------------- |             | <-------------- |            |
- +-----------+                  +-------------+                 +------------+
-```
-
-Sobre las flechas, se muestra el nombre del método de ConfigFrame que realiza el movimiento de información.
-
-El movimiento de las variables desde disco, se suele hacer solo una vez al iniciar el programa (llamando a la instrucción ReadFileToProp_AllFrames(), que llama a ReadFileToProp() de todos los frames de configuración). Y el movimiento de datos hacia disco se suele hacer al finalizar el programa (llamando a SavePropToFile_AllFrames()), pero puede hacerse cada vez que se cambia alguna de las propiedades, para tener la seguridad de que los cambios se mantendrán siempre actualizados en disco.
-
-Visualmente, lo que se muestra, para editar las propiedades, es el formulario de configuración (realmente se editan en un frame de configuración), y cuando se aceptan los cambios, se produce la actualización de las propiedades.
-
-Las propiedades que se registran sin parte visual (usando Asoc_Bol, Asoc_Int, ...), tienen el siguiente flujo:
-                                                          
-```
-+-----------+                  +-------------+
-|           | ReadFileToProp() |             |
-|           | ---------------> |             |
-|   Disco   |                  | Propiedades |
-|           | SavePropToFile() |             |
-|           | <--------------- |             |
-+-----------+                  +-------------+
-```
-
-En este caso, los métodos PropToWindow() y WindowToProp(), no tienen efecto sobre las variables asociadas, porque no se han asociado a controles.
-
 ## Métodos para asociar controles
 
 Existen diversos métodos para asociar variables a controles:
@@ -242,6 +208,75 @@ procedure Asoc_StrList(ptrStrList: pointer; etiq: string);
 ```
 
 Se incluye un ejemplo sencillo en donde se implementa una ventana de configuración que usa dos Frames, que se han implementado con pocas líneas de código.
+
+## Flujo de información
+
+ConfigFrame se basa en que la información de las propiedades (variables) se mueven de acuerdo al siguiente flujo:
+
+```
+ +-----------+                  +-------------+                 +------------+
+ |           | ReadFileToProp() |             |  PropToWindow() |            |
+ |           | ---------------> |             | --------------> |            |
+ |   Disco   |                  | Propiedades |                 | Formulario |
+ |           | SavePropToFile() |             |  WindowToProp() |            |
+ |           | <--------------- |             | <-------------- |            |
+ +-----------+                  +-------------+                 +------------+
+```
+
+Sobre las flechas, se muestra el nombre del método de ConfigFrame que realiza el movimiento de información.
+
+El movimiento de las variables desde disco, se suele hacer solo una vez al iniciar el programa (llamando a la instrucción ReadFileToProp_AllFrames(), que llama a ReadFileToProp() de todos los frames de configuración). Y el movimiento de datos hacia disco se suele hacer al finalizar el programa (llamando a SavePropToFile_AllFrames()), pero puede hacerse cada vez que se cambia alguna de las propiedades, para tener la seguridad de que los cambios se mantendrán siempre actualizados en disco.
+
+Visualmente, lo que se muestra, para editar las propiedades, es el formulario de configuración (realmente se editan en un frame de configuración), y cuando se aceptan los cambios, se produce la actualización de las propiedades.
+
+Las propiedades que se registran sin parte visual (usando Asoc_Bol, Asoc_Int, ...), tienen el siguiente flujo:
+                                                          
+```
++-----------+                  +-------------+
+|           | ReadFileToProp() |             |
+|           | ---------------> |             |
+|   Disco   |                  | Propiedades |
+|           | SavePropToFile() |             |
+|           | <--------------- |             |
++-----------+                  +-------------+
+```
+
+En este caso, los métodos PropToWindow() y WindowToProp(), no tienen efecto sobre las variables asociadas, porque no se han asociado a controles.
+
+## Detectando errores
+
+Comunmente, los errores se producen cuando se editan las variables en los frames de configuración, esto es cuando se ejecuta WindowToProp_AllFrames().
+
+Cada frame de configuración tiene una variable de cadena llamada "MsjErr", cuyo objetivo es almacenar el error producido.
+
+WindowToProp_AllFrames, tiene un bulce de este tipo:
+
+```
+  for f in ListOfFrames(form) do begin
+    f.WindowToProp;
+    if f.MsjErr<>'' then exit(f);
+  end;
+```
+
+Lo que significa que cuando un error es detectado, se detiene el proceso y se devuelve una referencia el frame problemático.
+
+Para detectar este error, se debe incluir una rutina de verificación en el formulario de configuración, cuando se llama a WindowToProp_AllFrames().
+
+Esta rutna puede tener la siguiente forma:
+
+```
+procedure TConfig.BtnApplyClick(Sender: TObject);
+begin
+  fraError := WindowToProp_AllFrames(self);
+  if fraError<>nil then begin
+    showmessage(fraError.MsjErr);
+    exit;
+  end;
+  SavePropToFile_AllFrames(self, arINI);
+end;
+```
+
+## Normas de diseño
 
 ConfigFrame, puede ser visto también, como un sencillo marco de trabajo (framework), porque define alguna reglas para la creación de ventanas de configuración:
 

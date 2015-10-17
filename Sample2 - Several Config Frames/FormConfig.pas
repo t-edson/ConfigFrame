@@ -17,12 +17,12 @@ type
   { TConfig }
 
   TConfig = class(TForm)
-    BitAplicar: TBitBtn;
-    BitCancel: TBitBtn;
-    BitAceptar: TBitBtn;
+    btnApply: TBitBtn;
+    btnCancel: TBitBtn;
+    btnAccept: TBitBtn;
     lstCateg: TListBox;
-    procedure BitAceptarClick(Sender: TObject);
-    procedure BitAplicarClick(Sender: TObject);
+    procedure btnAcceptClick(Sender: TObject);
+    procedure btnApplyClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -67,14 +67,14 @@ begin
   arIni := GetIniName;
 end;
 
-procedure TConfig.BitAceptarClick(Sender: TObject);
+procedure TConfig.btnAcceptClick(Sender: TObject);
 begin
   bitAplicarClick(Self);
   if fraError<>nil then exit;  //error?
   self.Close;  //exit if no error
 end;
 
-procedure TConfig.BitAplicarClick(Sender: TObject);
+procedure TConfig.btnApplyClick(Sender: TObject);
 begin
   WindowToProp;       //Escribe propiedades de los frames
   if fraError<>nil then begin

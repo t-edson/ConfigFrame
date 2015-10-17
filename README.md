@@ -100,39 +100,15 @@ Then, from that point, the Configuration frames can be modified in order to fit 
 
 It's important to ensure the form "FormConfig" is loaded when the program starts (or a runtime error will be raised).
 
-## Flow of information
+## Creating a new Configuration Frame
 
-ConfigFrame works on the fact that information of properties (variables) moves according to the following flow:
+To create a new Configuration Frame, this steps can be followed:
 
-```
- +-----------+                  +-------------+                 +------------+
- |           | ReadFileToProp() |             |  PropToWindow() |            |
- |           | ---------------> |             | --------------> |            |
- |   Disk    |                  | Properties  |                 |    Form    |
- |           | SavePropToFile() |             |  WindowToProp() |            |
- |           | <--------------- |             | <-------------- |            |
- +-----------+                  +-------------+                 +------------+
-```
-
-Above the arrows, is shown the name of the method of ConfigFrame that make the movement of the information.
-
-The movement of the variables from disk, is usually done once, when the program start(calling to the instruction ReadFileToProp_AllFrames(), who call ReadFileToProp() of all the configuration frames). And the movement from data to disk is usually done when the program ends (calling to SavePropToFile_AllFrames()), but it can be done every time a propery is changed, to ensure the changes are updated in disk.
-
-Visually what is shown to edit the properties, is the configuration form (actually the properties are edited in a configuration frame), and when the changes are accepted, the properties are updated.
-
-Properties that are associated without a visual control (using Asoc_Bol, Asoc_Int, ...), have the following flow:
-                                                          
-```
-+-----------+                  +-------------+
-|           | ReadFileToProp() |             |
-|           | ---------------> |             |
-|   Disk    |                  | Properties  |
-|           | SavePropToFile() |             |
-|           | <--------------- |             |
-+-----------+                  +-------------+
-```
-
-In this case, the methods PropToWindow() and WindowToProp(), have no effect on the associated properties or variables, because they have no controls associated.
+1. Copy the file of the library to a new folder.
+2. Open the Project Inspector and include the file "ConfigFrame.pas", from the folder where the library was copied.
+3. Open the file "ConfigFrame.pas", in the editor and show the Frame (F12).
+4. On the Lazarus main menu, select "File>New", then select "Inherited Item>Inherited Component".
+5. Chose "ConfigFrame" and press OK. This give us a new ConfigFrame, ready to include the controls we need to show the properties.
 
 ## Methods for association
 
@@ -171,6 +147,75 @@ procedure Asoc_StrList(ptrStrList: pointer; etiq: string);
 ```
 
 Two sample projects are included, one with one frame on a config form, and other with several frames on a config form.
+
+## Flow of information
+
+ConfigFrame works on the fact that information of properties (variables) moves according to the following flow:
+
+```
+ +-----------+                  +-------------+                 +------------+
+ |           | ReadFileToProp() |             |  PropToWindow() |            |
+ |           | ---------------> |             | --------------> |            |
+ |   Disk    |                  | Properties  |                 |    Form    |
+ |           | SavePropToFile() |             |  WindowToProp() |            |
+ |           | <--------------- |             | <-------------- |            |
+ +-----------+                  +-------------+                 +------------+
+```
+
+Above the arrows, is shown the name of the method of ConfigFrame that make the movement of the information.
+
+The movement of the variables from disk, is usually done once, when the program start(calling to the instruction ReadFileToProp_AllFrames(), who call ReadFileToProp() of all the configuration frames). And the movement from data to disk is usually done when the program ends (calling to SavePropToFile_AllFrames()), but it can be done every time a propery is changed, to ensure the changes are updated in disk.
+
+Visually what is shown to edit the properties, is the configuration form (actually the properties are edited in a configuration frame), and when the changes are accepted, the properties are updated.
+
+Properties that are associated without a visual control (using Asoc_Bol, Asoc_Int, ...), have the following flow:
+                                                          
+```
++-----------+                  +-------------+
+|           | ReadFileToProp() |             |
+|           | ---------------> |             |
+|   Disk    |                  | Properties  |
+|           | SavePropToFile() |             |
+|           | <--------------- |             |
++-----------+                  +-------------+
+```
+
+In this case, the methods PropToWindow() and WindowToProp(), have no effect on the associated properties or variables, because they have no controls associated.
+
+## Catching errors
+
+Typically, errors can be find when editing values from the visual part (the Configuration Frames), that is when executing WindowToProp_AllFrames().
+
+Each config frame has a string field named "MsjErr", aimed to save a message error, when it's produced.
+
+WindowToProp_AllFrames, has a loop of this type:
+
+```
+  for f in ListOfFrames(form) do begin
+    f.WindowToProp;
+    if f.MsjErr<>'' then exit(f);
+  end;
+```
+
+It means, when an error is detected, the process is stopped and a reference to the problematic frame is returned.
+
+To detect this error, a properly verification routine must be done in the Configuration Form, when calling to WindowToProp_AllFrames().
+
+It could have the following code:
+
+```
+procedure TConfig.BtnApplyClick(Sender: TObject);
+begin
+  fraError := WindowToProp_AllFrames(self);
+  if fraError<>nil then begin
+    showmessage(fraError.MsjErr);
+    exit;
+  end;
+  SavePropToFile_AllFrames(self, arINI);
+end;
+```
+
+## Design rules
 
 ConfigFrame, can be see too, like a small Framework, because it defines some rules for the creation of Configuration's dialogs:
 
