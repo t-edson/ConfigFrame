@@ -104,6 +104,7 @@ It's important to ensure the form "FormConfig" is loaded when the program starts
 
 ConfigFrame works on the fact that information of properties (variables) moves according to the following flow:
 
+```
  +-----------+                  +-------------+                 +------------+
  |           | ReadFileToProp() |             |  PropToWindow() |            |
  |           | ---------------> |             | --------------> |            |
@@ -111,6 +112,7 @@ ConfigFrame works on the fact that information of properties (variables) moves a
  |           | SavePropToFile() |             |  WindowToProp() |            |
  |           | <--------------- |             | <-------------- |            |
  +-----------+                  +-------------+                 +------------+
+```
 
 Above the arrows, is shown the name of the method of ConfigFrame that make the movement of the information.
 
@@ -120,6 +122,7 @@ Visually what is shown to edit the properties, is the configuration form (actual
 
 Properties that are associated without a visual control (using Asoc_Bol, Asoc_Int, ...), have the following flow:
                                                           
+```
 +-----------+                  +-------------+
 |           | ReadFileToProp() |             |
 |           | ---------------> |             |
@@ -127,6 +130,7 @@ Properties that are associated without a visual control (using Asoc_Bol, Asoc_In
 |           | SavePropToFile() |             |
 |           | <--------------- |             |
 +-----------+                  +-------------+
+```
 
 In this case, the methods PropToWindow() and WindowToProp(), have no effect on the associated properties or variables, because they have no controls associated.
 

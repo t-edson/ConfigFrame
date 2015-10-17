@@ -175,6 +175,7 @@ Para mayor información, revisar los códigos de ejemplo, de la página web.
 
 ConfigFrame se basa en que la información de las propiedades (variables) se mueven de acuerdo al siguiente flujo:
 
+```
  +-----------+                  +-------------+                 +------------+
  |           | ReadFileToProp() |             |  PropToWindow() |            |
  |           | ---------------> |             | --------------> |            |
@@ -182,6 +183,7 @@ ConfigFrame se basa en que la información de las propiedades (variables) se mue
  |           | SavePropToFile() |             |  WindowToProp() |            |
  |           | <--------------- |             | <-------------- |            |
  +-----------+                  +-------------+                 +------------+
+```
 
 Sobre las flechas, se muestra el nombre del método de ConfigFrame que realiza el movimiento de información.
 
@@ -191,6 +193,7 @@ Visualmente, lo que se muestra, para editar las propiedades, es el formulario de
 
 Las propiedades que se registran sin parte visual (usando Asoc_Bol, Asoc_Int, ...), tienen el siguiente flujo:
                                                           
+```
 +-----------+                  +-------------+
 |           | ReadFileToProp() |             |
 |           | ---------------> |             |
@@ -198,6 +201,7 @@ Las propiedades que se registran sin parte visual (usando Asoc_Bol, Asoc_Int, ..
 |           | SavePropToFile() |             |
 |           | <--------------- |             |
 +-----------+                  +-------------+
+```
 
 En este caso, los métodos PropToWindow() y WindowToProp(), no tienen efecto sobre las variables asociadas, porque no se han asociado a controles.
 
