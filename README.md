@@ -76,7 +76,7 @@ And, even with this simple code, the frame allow you to edit the value of two va
 
 To use ConfigFrame, it's advisable to follow the suggested design model. It consists on first create a Configuration Form and one or more Configuration Frames, that be included in the Configuration Form.
 
-Maybe, the simpler way to add a configuration form (with his configuration frames) to our project, is to use some of the samples, like Sample2, and copy the files  FormConfig.lfm, FormConfig.pas and all the files like FrameCfg*.* to the folder of our project. Then, simply include the code to start and save the configuration, in our main program:
+Maybe, the simpler way to add a configuration form (with his configuration frames) to our project, is to use some of the samples, like Sample2, and copy the files  FormConfig.lfm, FormConfig.pas and all the files like FrameCfg\*.* to the folder of our project. Then, simply include the code to start and save the configuration, in our main program:
 
 ```
 procedure TForm1.FormShow(Sender: TObject);
