@@ -73,7 +73,7 @@ Y aún con este código tan simple, el frame permitirá editar el valor de la va
 
 Para usar ConfigFrame, se recomienda seguir el modelo de diseño sugerido. Que consiste en crear primero un formulario de configuración y luego uno o más Frames de configuración, que serán incluidos en el formulario de configuración.
 
-Tal vez el método más sencillo de crear un formulario de configuración con sus respectivos frames, es usar uno de los proyectos ejemplos, como Sample3, y copiar los archivos FormConfig.lfm, FormConfig.pas y todos los archivos de tipo FrameCfg*.* a la carpeta de nuestro proyecto. Luego, simplemente incluir el código para iniciar y guardar el archivo de configuración en nuestro programa principal:
+Tal vez el método más sencillo de crear un formulario de configuración con sus respectivos frames, es usar uno de los proyectos ejemplos, como Sample3, y copiar los archivos FormConfig.lfm, FormConfig.pas y todos los archivos de tipo FrameCfg\*.* a la carpeta de nuestro proyecto. Luego, simplemente incluir el código para iniciar y guardar el archivo de configuración en nuestro programa principal:
 
 ```
 procedure TForm1.FormShow(Sender: TObject);
