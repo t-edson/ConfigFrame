@@ -175,13 +175,31 @@ Para mayor información, revisar los códigos de ejemplo, de la página web.
 
 ConfigFrame se basa en que la información de las propiedades (variables) se mueven de acuerdo al siguiente flujo:
 
-Disco  <----> Propiedades <------> Formulario
+ +-----------+                  +-------------+                 +------------+
+ |           | ReadFileToProp() |             |  PropToWindow() |            |
+ |           | ---------------> |             | --------------> |            |
+ |   Disco   |                  | Propiedades |                 | Formulario |
+ |           | SavePropToFile() |             |  WindowToProp() |            |
+ |           | <--------------- |             | <-------------- |            |
+ +-----------+                  +-------------+                 +------------+
 
-Visualmente, lo que se ve para editar a las propiedades es el formulario (realmente se editan en el frame de configuración), y cuando se aceptan los cambios, se produce la actualizción de las propiedades.
+Sobre las flechas, se muestra el nombre del método de ConfigFrame que realiza el movimiento de información.
 
-El flujo de las variables a disco se produce cuando se desea hacer los cambios permanentes. Esto se debe hacer llamando a la instrucción SavePropToFile_AllFrames().
+El movimiento de las variables desde disco, se suele hacer solo una vez al iniciar el programa (llamando a la instrucción ReadFileToProp_AllFrames(), que llama a ReadFileToProp() de todos los frames de configuración). Y el movimiento de datos hacia disco se suele hacer al finalizar el programa (llamando a SavePropToFile_AllFrames()), pero puede hacerse cada vez que se cambia alguna de las propiedades, para tener la seguridad de que los cambios se mantendrán siempre actualizados en disco.
 
-De igual forma para leer los datos de disco a las propiedades, se debe usar la instrucción ReadFileToProp_AllFrames().
+Visualmente, lo que se muestra, para editar las propiedades, es el formulario de configuración (realmente se editan en un frame de configuración), y cuando se aceptan los cambios, se produce la actualización de las propiedades.
+
+Las propiedades que se registran sin parte visual (usando Asoc_Bol, Asoc_Int, ...), tienen el siguiente flujo:
+                                                          
++-----------+                  +-------------+
+|           | ReadFileToProp() |             |
+|           | ---------------> |             |
+|   Disco   |                  | Propiedades |
+|           | SavePropToFile() |             |
+|           | <--------------- |             |
++-----------+                  +-------------+
+
+En este caso, los métodos PropToWindow() y WindowToProp(), no tienen efecto sobre las variables asociadas, porque no se han asociado a controles.
 
 ## Métodos para asociar controles
 
@@ -213,8 +231,8 @@ Existen diversos métodos para asociar variables a controles:
 También, si tan solo queremos almacenar las variables en un archivo INI, existen los métodos apropiados:
 
 ```
-procedure Asoc_Int(ptrInt: pointer; etiq: string; defVal: integer);
 procedure Asoc_Bol(ptrBol: pointer; etiq: string; defVal: boolean);
+procedure Asoc_Int(ptrInt: pointer; etiq: string; defVal: integer);
 procedure Asoc_Str(ptrStr: pointer; etiq: string; defVal: string);
 procedure Asoc_StrList(ptrStrList: pointer; etiq: string);
 ```

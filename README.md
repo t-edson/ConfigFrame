@@ -100,6 +100,35 @@ Then, from that point, the Configuration frames can be modified in order to fit 
 
 It's important to ensure the form "FormConfig" is loaded when the program starts (or a runtime error will be raised).
 
+## Flow of information
+
+ConfigFrame works on the fact that information of properties (variables) moves according to the following flow:
+
+ +-----------+                  +-------------+                 +------------+
+ |           | ReadFileToProp() |             |  PropToWindow() |            |
+ |           | ---------------> |             | --------------> |            |
+ |   Disk    |                  | Properties  |                 |    Form    |
+ |           | SavePropToFile() |             |  WindowToProp() |            |
+ |           | <--------------- |             | <-------------- |            |
+ +-----------+                  +-------------+                 +------------+
+
+Above the arrows, is shown the name of the method of ConfigFrame that make the movement of the information.
+
+The movement of the variables from disk, is usually done once, when the program start(calling to the instruction ReadFileToProp_AllFrames(), who call ReadFileToProp() of all the configuration frames). And the movement from data to disk is usually done when the program ends (calling to SavePropToFile_AllFrames()), but it can be done every time a propery is changed, to ensure the changes are updated in disk.
+
+Visually what is shown to edit the properties, is the configuration form (actually the properties are edited in a configuration frame), and when the changes are accepted, the properties are updated.
+
+Properties that are associated without a visual control (using Asoc_Bol, Asoc_Int, ...), have the following flow:
+                                                          
++-----------+                  +-------------+
+|           | ReadFileToProp() |             |
+|           | ---------------> |             |
+|   Disk    |                  | Properties  |
+|           | SavePropToFile() |             |
+|           | <--------------- |             |
++-----------+                  +-------------+
+
+In this case, the methods PropToWindow() and WindowToProp(), have no effect on the associated properties or variables, because they have no controls associated.
 
 ## Methods for association
 
