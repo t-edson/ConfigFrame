@@ -178,7 +178,11 @@ Existen diversos métodos para asociar variables a controles:
     procedure Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
                              defVal: integer; minVal, maxVal: integer);
     procedure Asoc_Int_TSpinEdit(ptrInt: pointer; spEdit: TSpinEdit; etiq: string;
-                             defVal, minVal, maxVal: integer);
+                             defVal: integer);
+    procedure Asoc_Dbl_TEdit(ptrDbl: pointer; edit: TEdit; etiq: string;
+                             defVal: double; minVal, maxVal: double);
+    procedure Asoc_Dbl_TFloatSpinEdit(ptrDbl: pointer; spEdit: TFloatSpinEdit; etiq: string;
+                             defVal: double);
     procedure Asoc_Str_TEdit(ptrStr: pointer; edit: TCustomEdit; etiq: string;
                              defVal: string);
     procedure Asoc_Str_TEditButton(ptrStr: pointer; edit: TCustomEditButton; etiq: string;

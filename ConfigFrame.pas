@@ -1,11 +1,20 @@
 {
-CfgFrame 0.6
-================
+CfgFrame 0.7
+=============
 Por Tito Hinostroza 23/07/2015
 
-* Se cambia el modo de trabajo. Ahora se define a CfgFrame como un verdadero Frame
-y para crear Frames de configuración, ahora se debe crear Frames que hereden de
-CfgFrame.
+* Se cambia el nombre de las fuciones WriteStr y ReadStr.
+* Se agrega protección para permitir incluir el caracter "=", y espacios al inicio,
+cuando se usan StringList. Antes no se guardaben apropiadamente.
+* Se agrega la opción para incluir saltos de línea en los campos de cadena.
+* Se agrega el enumerado tp_Dbl_TEdit
+* Se agrega el enumerado tp_Dbl_TFloatSpinEdit
+* Se quitan las validaciones de rango para el tipo tp_Int_TSpinEdit, porque estas ya
+las hace el mismo control.
+* Se quitan los parámetros de rango de Asoc_Int_TSpinEdit().
+* Se agregan los método Asoc_Dbl_TEdit(), y Asoc_Dbl_TFloatSpinEdit() para asociar
+flotantes a TEdit y a TFloatSpinEdit, respectivamente.
+
 
 Descripción
 ===========
@@ -43,6 +52,7 @@ const
   MSG_FLD_HAV_VAL = 'Filed must contain a value.';
   MSG_ONLY_NUM_VAL ='Only numeric values are allowed.';
   MSG_NUM_TOO_LONG = 'Numeric value is too large.';
+  MSG_WRG_FLT_NUMB = 'Wrong float number.';
   MSG_MAX_VAL_IS  = 'The maximun allowed value is: ';
   MSG_MIN_VAL_IS  = 'The minimun allowed value is: ';
   MSG_DESIGN_ERROR = 'Design error.';
@@ -52,6 +62,8 @@ type
   //Tipos de asociaciones
   TTipPar = (
    tp_Int_TEdit       //entero asociado a TEdit
+  ,tp_Dbl_TEdit       //Double asociado a TEdit
+  ,tp_Dbl_TFloatSpinEdit   //Double asociado a TFloatSpinEdit
   ,tp_Int_TSpinEdit   //entero asociado a TSpinEdit
   ,tp_Str_TEdit       //string asociado a TEdit
   ,tp_Str_TEditButton //string asociado a TEditButton (ancestro de TFileNameEdit, TDirectoryEdit, ...)
@@ -77,12 +89,16 @@ type
     tipPar: TTipPar;   //tipo de par agregado
     etiqVar: string;   //etiqueta usada para grabar la variable en archivo INI
     minEnt, maxEnt: integer;  //valores máximos y mínimos para variables enteras
+    minDbl, maxDbl: Double;  //valores máximos y mínimos para variables Double
     //valores por defecto
     defEnt: integer;   //valor entero por defecto al leer de archivo INI
+    defDbl: Double;    //valor double por defecto al leer de archivo INI
     defStr: string;    //valor string por defecto al leer de archivo INI
     defBol: boolean;   //valor booleano por defecto al leer de archivo INI
     defCol: TColor;    //valor TColor por defecto al leer de archivo INI
   end;
+
+  { TCfgFrame }
 
   TCfgFrame = class(TFrame)
   private
@@ -90,12 +106,14 @@ type
     procedure AgregAsoc(r: TParElem);
   protected
     valInt: integer;  //valor entero de salida
+    valDbl: Double;  //valor double de salida
   public
     secINI: string;   //sección donde se guardaran los datos en un archivo INI
     MsjErr: string;   //mensaje de error
     OnUpdateChanges: procedure of object;
     procedure ShowPos(x, y: integer); virtual;
     function EditValidateInt(edit: TEdit; min: integer=MaxInt; max: integer=-MaxInt): boolean;
+    function EditValidateDbl(edit: TEdit; min: Double=0; max: Double=1e6): boolean;
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
     procedure PropToWindow; virtual;
@@ -106,7 +124,11 @@ type
     procedure Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
                              defVal: integer; minVal, maxVal: integer);
     procedure Asoc_Int_TSpinEdit(ptrInt: pointer; spEdit: TSpinEdit; etiq: string;
-                             defVal, minVal, maxVal: integer);
+                             defVal: integer);
+    procedure Asoc_Dbl_TEdit(ptrDbl: pointer; edit: TEdit; etiq: string;
+                             defVal: double; minVal, maxVal: double);
+    procedure Asoc_Dbl_TFloatSpinEdit(ptrDbl: pointer; spEdit: TFloatSpinEdit; etiq: string;
+                             defVal: double);
     procedure Asoc_Str_TEdit(ptrStr: pointer; edit: TCustomEdit; etiq: string;
                              defVal: string);
     procedure Asoc_Str_TEditButton(ptrStr: pointer; edit: TCustomEditButton; etiq: string;
@@ -149,25 +171,27 @@ type
 implementation
 {$R *.lfm}
 //Funciones de uso interno
-function WriteStr(s:string): string;
-//Protege a una cadena para que no pierda los espacios laterales si es que los tiene,
-//porque el el archivo INI se pierden.
+function CodeStr(s:string): string;
+{Protege a una cadena para que no pierda los espacios laterales si es que los tiene,
+porque el el archivo INI se pierden. Además codifica el caracter "=", porque es
+reservado en el archvio INI}
 begin
-  Result:='.'+s+'.';
+  Result := '.'+s+'.';
+  Result := StringReplace(Result, '=', #25, [rfReplaceAll]);  //protege caracter
+  Result := StringReplace(Result, LineEnding, #26, [rfReplaceAll]);  //protege caracter
 end;
-function ReadStr(s:string): string;
-//Quita la protección a una cadena que ha sido guardada en un archivo INI
+function DecodeStr(s:string): string;
+{Quita la protección a una cadena que ha sido guardada en un archivo INI}
 begin
   Result:=copy(s,2,length(s)-2);
+  Result := StringReplace(Result, #25, '=', [rfReplaceAll]);  //protege caracter
+  Result := StringReplace(Result, #26, LineEnding, [rfReplaceAll]);  //protege caracter
 end;
 //Utilidades para el formulario de configuración
 function IsFrameProperty(c: TComponent): boolean;
 //Permite identificar si un componente es un Frame creado a partir de
 //esta unidad.
-var
-  x: String;
 begin
-  x := c.ClassParent.ClassName;
   if (c.ClassParent.ClassName='TCfgFrame') then
      Result := true
   else
@@ -367,6 +391,7 @@ var
   i,j:integer;
   r: TParElem;
   n: integer;
+  d: Double;
   b: boolean;
   s: string;
   c: TColor;
@@ -386,6 +411,16 @@ begin
           n:= Integer(r.Pvar^);
           TSpinEdit(r.pCtl).Value:=n;
        end;
+    tp_Dbl_TEdit: begin
+          //carga double
+          d:= Double(r.Pvar^);
+          TEdit(r.pCtl).Text:=FloatToStr(d);
+      end;
+    tp_Dbl_TFloatSpinEdit: begin
+          //carga double
+          d:=Double(r.pVar^);
+          TFloatSpinEdit(r.pCtl).Value:=d;
+      end;
     tp_Str_TEdit:  begin  //cadena en TEdit
           //carga cadena
           s:= String(r.Pvar^);
@@ -459,6 +494,7 @@ var
   spEd: TSpinEdit;
   r: TParElem;
   list: TStringList;
+  spFloatEd: TFloatSpinEdit;
 begin
   msjErr := '';
   for i:=0 to high(listParElem) do begin
@@ -471,17 +507,17 @@ begin
        end;
     tp_Int_TSpinEdit: begin   //entero de TSpinEdit
           spEd := TSpinEdit(r.pCtl);
-          if spEd.Value < r.minEnt then begin
-            MsjErr:=MSG_MIN_VAL_IS+IntToStr(r.minEnt);
-            if spEd.visible and spEd.enabled and self.visible then spEd.SetFocus;
-            exit;
-          end;
-          if spEd.Value > r.maxEnt then begin
-            MsjErr:=MSG_MAX_VAL_IS+IntToStr(r.maxEnt);
-            if spEd.visible and spEd.enabled and self.visible then spEd.SetFocus;
-            exit;
-          end;
           Integer(r.Pvar^) := spEd.Value;
+       end;
+    tp_Dbl_TEdit: begin  //double a TEdit
+          if not EditValidateDbl(TEdit(r.pCtl),r.minDbl, r.MaxDbl) then
+            exit;   //hubo error. con mensaje en "msjErr"
+          Double(r.Pvar^) := valDbl;  //guarda
+       end;
+    tp_Dbl_TFloatSpinEdit: begin  //double a TFloatSpinEdit
+          spFloatEd := TFloatSpinEdit(r.pCtl);
+          //las validaciones de rango las hace el mismo control
+          Double(r.pVar^) := spFloatEd.Value;
        end;
     tp_Str_TEdit: begin  //cadena de TEdit
           String(r.Pvar^) := TEdit(r.pCtl).Text;
@@ -551,8 +587,9 @@ end;
 procedure TCfgFrame.ReadFileToProp(var arcINI: TIniFile);
 //Lee de disco las variables registradas
 var
-  i: integer;
-  r: TParElem;
+  i, n: integer;
+  r   : TParElem;
+  list: TStringList;
 begin
   for i:=0 to high(listParElem) do begin
     r := listParElem[i];
@@ -563,17 +600,26 @@ begin
     tp_Int_TSpinEdit: begin  //lee entero
          Integer(r.Pvar^) := arcINI.ReadInteger(secINI, r.etiqVar, r.defEnt);
        end;
+    tp_Dbl_TEdit: begin
+         Double(r.Pvar^) := arcINI.ReadFloat(secINI, r.etiqVar, r.defDbl);
+       end;
+    tp_Dbl_TFloatSpinEdit: begin
+         Double(r.pVar^) := arcINI.ReadFloat(secINI, r.etiqVar, r.defDbl);
+       end;
     tp_Str_TEdit: begin  //lee cadena
-         String(r.Pvar^) := ReadStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
+         String(r.Pvar^) := DecodeStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
        end;
     tp_Str_TEditButton: begin  //lee cadena
-         String(r.Pvar^) := ReadStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
+         String(r.Pvar^) := DecodeStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
        end;
     tp_Str_TCmbBox: begin  //lee cadena
-         String(r.Pvar^) := ReadStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
+         String(r.Pvar^) := DecodeStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
        end;
     tp_StrList_TListBox: begin //lee TStringList
-         arcINI.ReadSection(secINI+'_'+r.etiqVar,TStringList(r.Pvar^));
+         list := TStringList(r.Pvar^);
+         arcINI.ReadSection(secINI+'_'+r.etiqVar, list);
+         //decodifica cadena
+         for n:=0 to list.Count-1 do list[n] := DecodeStr(list[n]);
        end;
     tp_Bol_TCheckBox: begin  //lee booleano
          boolean(r.Pvar^) := arcINI.ReadBool(secINI, r.etiqVar, r.defBol);
@@ -607,10 +653,13 @@ begin
          boolean(r.Pvar^) := arcINI.ReadBool(secINI, r.etiqVar, r.defBol);
        end;
     tp_Str: begin  //lee cadena
-         String(r.Pvar^) := ReadStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
+         String(r.Pvar^) := DecodeStr(arcINI.ReadString(secINI, r.etiqVar, '.'+r.defStr+'.'));
        end;
     tp_StrList: begin //lee TStringList
-         arcINI.ReadSection(secINI+'_'+r.etiqVar,TStringList(r.Pvar^));
+         list := TStringList(r.Pvar^);
+         arcINI.ReadSection(secINI+'_'+r.etiqVar, list);
+         //decodifica cadena
+         for n:=0 to list.Count-1 do list[n] := DecodeStr(list[n]);
        end;
     else  //no se ha implementado bien
       msjErr := MSG_DESIGN_ERROR;
@@ -630,6 +679,7 @@ var
   s: string;
   c: TColor;
   strlst: TStringList;
+  d: Double;
 begin
   for i:=0 to high(listParElem) do begin
     r := listParElem[i];
@@ -642,23 +692,33 @@ begin
          n := Integer(r.Pvar^);
          arcINI.WriteInteger(secINI, r.etiqVar, n);
        end;
+    tp_Dbl_TEdit: begin  //escribe double
+         d := Double(r.Pvar^);
+         arcINI.WriteFloat(secINI, r.etiqVar, d);
+    end;
+    tp_Dbl_TFloatSpinEdit: begin
+         d := Double(r.Pvar^);
+         arcINI.WriteFloat(secINI, r.etiqVar, d);
+    end;
     tp_Str_TEdit: begin //escribe cadena
          s := String(r.Pvar^);
-         arcINI.WriteString(secINI, r.etiqVar,WriteStr(s));
+         arcINI.WriteString(secINI, r.etiqVar,CodeStr(s));
        end;
     tp_Str_TEditButton: begin //escribe cadena
          s := String(r.Pvar^);
-         arcINI.WriteString(secINI, r.etiqVar,WriteStr(s));
+         arcINI.WriteString(secINI, r.etiqVar,CodeStr(s));
        end;
     tp_Str_TCmbBox: begin //escribe cadena
          s := String(r.Pvar^);
-         arcINI.WriteString(secINI, r.etiqVar,WriteStr(s));
+         arcINI.WriteString(secINI, r.etiqVar,CodeStr(s));
        end;
     tp_StrList_TListBox: begin  //escribe TStringList
           strlst := TStringList(r.Pvar^);
           arcINI.EraseSection(secINI+'_'+r.etiqVar);
-          for j:= 0 to strlst.Count-1 do
-            arcINI.WriteString(secINI+'_'+r.etiqVar,strlst[j],'');
+          for j:= 0 to strlst.Count-1 do begin
+            arcINI.WriteString(secINI+'_'+r.etiqVar,
+                               CodeStr(strlst[j]),'');
+          end;
        end;
     tp_Bol_TCheckBox: begin  //escribe booleano
          b := boolean(r.Pvar^);
@@ -700,13 +760,15 @@ begin
        end;
     tp_Str: begin //escribe cadena
          s := String(r.Pvar^);
-         arcINI.WriteString(secINI, r.etiqVar,WriteStr(s));
+         arcINI.WriteString(secINI, r.etiqVar,CodeStr(s));
        end;
     tp_StrList: begin  //escribe TStringList
           strlst := TStringList(r.Pvar^);
           arcINI.EraseSection(secINI+'_'+r.etiqVar);
-          for j:= 0 to strlst.Count-1 do
-            arcINI.WriteString(secINI+'_'+r.etiqVar,strlst[j],'');
+          for j:= 0 to strlst.Count-1 do begin
+            arcINI.WriteString(secINI+'_'+r.etiqVar,
+                               CodeStr(strlst[j]),'');
+          end;
        end;
     else  //no se ha implementado bien
       msjErr := MSG_DESIGN_ERROR;
@@ -717,7 +779,7 @@ end;
 //Métodos de asociación
 procedure TCfgFrame.Asoc_Int_TEdit(ptrInt: pointer; edit: TEdit; etiq: string;
   defVal: integer; minVal, maxVal: integer);
-//Agrega un para variable entera - Control TEdit
+//Agrega un par variable entera - Control TEdit
 var
   r: TParElem;
 begin
@@ -731,8 +793,8 @@ begin
   AgregAsoc(r);          //agrega
 end;
 procedure TCfgFrame.Asoc_Int_TSpinEdit(ptrInt: pointer; spEdit: TSpinEdit;
-  etiq: string; defVal, minVal, maxVal: integer);
-//Agrega un para variable entera - Control TSpinEdit
+  etiq: string; defVal: integer);
+//Agrega un par variable entera - Control TSpinEdit
 var
   r: TParElem;
 begin
@@ -741,8 +803,33 @@ begin
   r.tipPar := tp_Int_TSpinEdit;  //tipo de par
   r.etiqVar:= etiq;
   r.defEnt := defVal;
-  r.minEnt := minVal;    //protección de rango
-  r.maxEnt := maxVal;    //protección de rango
+  AgregAsoc(r);          //agrega
+end;
+procedure TCfgFrame.Asoc_Dbl_TEdit(ptrDbl: pointer; edit: TEdit; etiq: string;
+  defVal: double; minVal, maxVal: double);
+//Agrega un par variable double - Control TEdit
+var
+  r: TParElem;
+begin
+  r.pVar   := ptrDbl;  //toma referencia
+  r.pCtl   := edit;    //toma referencia
+  r.tipPar := tp_Dbl_TEdit;  //tipo de par
+  r.etiqVar:= etiq;
+  r.defDbl := defVal;
+  r.minDbl := minVal;    //protección de rango
+  r.maxDbl := maxVal;    //protección de rango
+  AgregAsoc(r);          //agrega
+end;
+procedure TCfgFrame.Asoc_Dbl_TFloatSpinEdit(ptrDbl: pointer;
+  spEdit: TFloatSpinEdit; etiq: string; defVal: double);
+var
+  r: TParElem;
+begin
+  r.pVar   := ptrDbl;  //toma referencia
+  r.pCtl   := spEdit;    //toma referencia
+  r.tipPar := tp_Dbl_TFloatSpinEdit;  //tipo de par
+  r.etiqVar:= etiq;
+  r.defDbl := defVal;
   AgregAsoc(r);          //agrega
 end;
 procedure TCfgFrame.Asoc_Str_TEdit(ptrStr: pointer; edit: TCustomEdit;
@@ -937,10 +1024,10 @@ begin
   Self.Visible:=true;
 end;
 function TCfgFrame.EditValidateInt(edit: TEdit; min: integer; max: integer): boolean;
-//Velida el contenido de un TEdit, para ver si se puede convertir a un valor entero.
-//Si no se puede convertir, devuelve FALSE, devuelve el mensaje de error en "MsjErr", y
-//pone el TEdit con enfoque.
-//Si se puede convertir, devuelve TRUE, y el valor convertido en "valEnt".
+{Valida el contenido de un TEdit, para ver si se puede convertir a un valor entero.
+Si no se puede convertir, devuelve FALSE, devuelve el mensaje de error en "MsjErr", y
+pone el TEdit con enfoque.
+Si se puede convertir, devuelve TRUE, y el valor convertido en "valInt".}
 var
   tmp : string;
   c : char;
@@ -987,6 +1074,37 @@ begin
   end;
   //pasó las validaciones
   valInt:=n;  //actualiza valor
+  Result := true;   //tuvo éxito
+end;
+
+function TCfgFrame.EditValidateDbl(edit: TEdit; min: Double; max: Double): boolean;
+{Valida el contenido de un TEdit, para ver si se puede convertir a un valor Double.
+Si no se puede convertir, devuelve FALSE, devuelve el mensaje de error en "MsjErr", y
+pone el TEdit con enfoque.
+Si se puede convertir, devuelve TRUE, y el valor convertido en "valDbl".}
+var
+  d: double;
+begin
+  Result := false;
+  //intenta convertir
+  if not TryStrToFloat(edit.Text, d) then begin
+    MsjErr:= MSG_WRG_FLT_NUMB;
+    if edit.visible and edit.enabled and self.visible then edit.SetFocus;
+    exit;
+  end;
+  //validamos
+  if d>max then begin
+    MsjErr:= MSG_MAX_VAL_IS + FloatToStr(max);
+    if edit.visible and edit.enabled and self.visible then edit.SetFocus;
+    exit;
+  end;
+  if d<min then begin
+    MsjErr:= MSG_MIN_VAL_IS + FloatToStr(min);
+    if edit.visible and edit.enabled and self.visible then edit.SetFocus;
+    exit;
+  end;
+  //pasó las validaciones
+  valDbl:=d;  //actualiza valor
   Result := true;   //tuvo éxito
 end;
 
