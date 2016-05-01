@@ -1,20 +1,9 @@
 {
-CfgFrame 0.7
+CfgFrame 0.8b
 =============
-Por Tito Hinostroza 23/07/2015
+Por Tito Hinostroza 09/03/2016
 
-* Se cambia el nombre de las fuciones WriteStr y ReadStr.
-* Se agrega protección para permitir incluir el caracter "=", y espacios al inicio,
-cuando se usan StringList. Antes no se guardaben apropiadamente.
-* Se agrega la opción para incluir saltos de línea en los campos de cadena.
-* Se agrega el enumerado tp_Dbl_TEdit
-* Se agrega el enumerado tp_Dbl_TFloatSpinEdit
-* Se quitan las validaciones de rango para el tipo tp_Int_TSpinEdit, porque estas ya
-las hace el mismo control.
-* Se quitan los parámetros de rango de Asoc_Int_TSpinEdit().
-* Se agregan los método Asoc_Dbl_TEdit(), y Asoc_Dbl_TFloatSpinEdit() para asociar
-flotantes a TEdit y a TFloatSpinEdit, respectivamente.
-
+* Se agrega el enumerado tp_StrList_TStringGrid, para poder asociar StringList a Grillas.
 
 Descripción
 ===========
@@ -30,7 +19,7 @@ unit ConfigFrame;
 interface
 uses
   Classes, SysUtils, Forms, StdCtrls, ExtCtrls, Spin, IniFiles, Dialogs,
-  ComCtrls, Graphics, EditBtn;
+  ComCtrls, Graphics, EditBtn, Grids;
 
 const
 {  MSG_NO_INI_FOUND = 'No se encuentra archivo de configuración: ';
@@ -69,6 +58,7 @@ type
   ,tp_Str_TEditButton //string asociado a TEditButton (ancestro de TFileNameEdit, TDirectoryEdit, ...)
   ,tp_Str_TCmbBox     //string asociado a TComboBox
   ,tp_StrList_TListBox //StringList asociado a TListBox
+  ,tp_StrList_TStringGrid //StringList asociado a TStringGrid
   ,tp_Bol_TCheckBox   //booleano asociado a CheckBox
   ,tp_TCol_TColBut    //TColor asociado a TColorButton
   ,tp_Enum_TRadBut    //Enumerado asociado a TRadioButton
@@ -90,6 +80,10 @@ type
     etiqVar: string;   //etiqueta usada para grabar la variable en archivo INI
     minEnt, maxEnt: integer;  //valores máximos y mínimos para variables enteras
     minDbl, maxDbl: Double;  //valores máximos y mínimos para variables Double
+    //Campos para configurar la grilla,cuando se use
+    HasHeader  : boolean;  //Si incluye encabezado
+    HasFixedCol: boolean;   //Si tiene una columna fija
+    ColCount   : byte;     //Cantidad de columnas para la grilla
     //valores por defecto
     defEnt: integer;   //valor entero por defecto al leer de archivo INI
     defDbl: Double;    //valor double por defecto al leer de archivo INI
@@ -396,6 +390,7 @@ var
   s: string;
   c: TColor;
   list: TStringList;
+  gr: TStringGrid;
 begin
   msjErr := '';
   for i:=0 to high(listParElem) do begin
@@ -442,6 +437,29 @@ begin
          TListBox(r.pCtl).Clear;
          for j:=0 to list.Count-1 do
            TListBox(r.pCtl).AddItem(list[j],nil);
+      end;
+    tp_StrList_TStringGrid: begin  //lista en TStringGrid
+         //carga lista
+         list := TStringList(r.Pvar^);
+         gr := TStringGrid(r.pCtl);
+         gr.Clear;
+         gr.BeginUpdate;
+         if r.HasFixedCol then gr.FixedCols:=1 else gr.FixedCols:=0;
+         gr.ColCount:=r.ColCount;  //fija número de columnas
+         if r.HasHeader then begin
+           //Hay encabezado
+           gr.RowCount:=list.Count+1;  //deja espacio para encabezado
+           for j:=0 to list.Count-1 do begin
+             gr.Cells[0,j+1] := list[j];
+           end;
+         end else  begin
+           //No hay encabezado
+           gr.RowCount:=list.Count;
+           for j:=0 to list.Count-1 do begin
+             gr.Cells[0,j] := list[j];
+           end;
+         end;
+         gr.EndUpdate();
       end;
     tp_Bol_TCheckBox: begin //boolean a TCheckBox
           b := boolean(r.Pvar^);
