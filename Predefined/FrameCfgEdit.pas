@@ -108,7 +108,7 @@ begin
   Asoc_Col_TColBut(@cFonPan, cbutFonPan, 'cFonPan',colFonDef);
   Asoc_Col_TColBut(@cTxtPan, cbutTxtPan, 'cTxtPan',clBlack);
 
-  Asoc_Int_TSpinEdit(@TamLet, spTam, 'TamLet', 10, 5, 20);
+  Asoc_Int_TSpinEdit(@TamLet, spTam, 'TamLet', 10);
 
   cmbTipoLetra.Items.Clear;
   cmbTipoLetra.Items.Add('Courier New');
