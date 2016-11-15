@@ -4,6 +4,8 @@ CfgFrame 0.8b
 Por Tito Hinostroza 09/03/2016
 
 * Se agrega el enumerado tp_StrList_TStringGrid, para poder asociar StringList a Grillas.
+* Se corrige una falla en WindowToProp, producida cuando se intentaba asociar con dos
+instrucciones de tipo Asoc_Enum_TRadGroup.
 
 Descripción
 ===========
@@ -104,7 +106,9 @@ type
   public
     secINI: string;   //sección donde se guardaran los datos en un archivo INI
     MsjErr: string;   //mensaje de error
-    OnUpdateChanges: procedure of object;
+    OnUpdateChanges: procedure of object;  {Se genera cuando se modifica alguna de las
+                                            propiedades, del frame. Sea por que se lee de
+                                            archivo o se cambia con controles.}
     procedure ShowPos(x, y: integer); virtual;
     function EditValidateInt(edit: TEdit; min: integer=MaxInt; max: integer=-MaxInt): boolean;
     function EditValidateDbl(edit: TEdit; min: Double=0; max: Double=1e6): boolean;
@@ -577,7 +581,6 @@ begin
           //debe fijar el valor del enumerado
           if r.lVar = 4 then begin  //se puede manejar como entero
             Int32(r.Pvar^) := TRadioGroup(r.pCtl).ItemIndex;  //lee
-            break;
           end else begin  //tamaño no implementado
             msjErr := MSG_NO_IMP_ENUM_T;
             exit;
