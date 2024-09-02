@@ -1,6 +1,8 @@
 ConfigFrame 0.8b
 ===============
 
+NOTE: ConfigFrame is now deprecated. It's no been updated. As a replace you can use https://github.com/t-edson/MiConfig.
+
 ConfigFrame is a Lazarus unit that can be used to create quick configuration dialogs.
 
 This unit for Lazarus, contain a Frame class for derives Configuration Frames.
